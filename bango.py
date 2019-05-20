@@ -5,9 +5,12 @@ import os
 mypath = "D:/localFile/h/"
 
 def get_number(filename):
-    return re.search("[a-zA-Z]+-?\d+[a-zA-Z]?",filename).group()
+    '''获取番号'''
+    # return re.search("[a-zA-Z]+-?\d+[a-zA-Z]?",filename).group()
+    return re.search("[a-zA-Z]+-?\d+",filename).group()
 
 def get_all_filename(filepath):
+    '''获取目录下所有文件名'''
     result = []
     list = os.walk(filepath)
     for path,dir_list,file_list in list:  
