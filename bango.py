@@ -2,12 +2,16 @@ import re
 import glob
 import os
 
-mypath = "D:/localFile/h/"
+mypath = "D:/Games/project/hentai/"
 
 def get_number(filename):
     '''获取番号'''
     # return re.search("[a-zA-Z]+-?\d+[a-zA-Z]?",filename).group()
-    return re.search("[a-zA-Z]+-?\d+",filename).group()
+    rr = re.search("[a-zA-Z]+-?\d+",filename)
+    if(rr):
+        return rr.group()
+    else:
+        return ""
 
 def get_all_filename(filepath):
     '''获取目录下所有文件名'''
