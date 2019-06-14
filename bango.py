@@ -2,30 +2,25 @@ import re
 import glob
 import os
 
-mypath = "D:/Games/project/hentai/"
-
-def get_number(filename):
+def get_bango(filename):
     '''获取番号'''
-    # return re.search("[a-zA-Z]+-?\d+[a-zA-Z]?",filename).group()
-    rr = re.search("[a-zA-Z]+-?\d+",filename)
+    # return re.search("[a-zA-Z]+-?/d+[a-zA-Z]?",filename).group()
+    rr = re.search("[a-zA-Z]+-?\\d+", filename)
     if(rr):
         return rr.group()
     else:
-        return ""
+        return "error when find = "+filename
 
-def get_all_filename(filepath):
-    '''获取目录下所有文件名'''
+def list_file_name(filepath):
+    '''获取目录下所有全路径文件名'''
     result = []
-    list = os.walk(filepath)
-    for path,dir_list,file_list in list:  
-        for file_name in file_list:  
-            r = os.path.join(path, file_name)
-            r = os.path.basename(r)
+    for root, dirs, files in os.walk(filepath):
+        for file in files:
+            r = os.path.join(root, file)
             result.append(r)
     return result
-    
-#launch
-for m in get_all_filename(mypath):
-        print(m+"===="+get_number(m))
 
-# print(get_number("ppt-018A.mkv"))
+# launch
+mypath = "D:\\localFile\\h"
+for s in list_file_name(mypath):
+    print(get_bango(os.path.basename(s)))
