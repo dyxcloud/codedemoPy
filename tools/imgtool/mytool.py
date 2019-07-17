@@ -35,6 +35,7 @@ def dops_toweb():
 
 def tryfile(filepath):
     '''自旋10秒,判断文件是否导出完毕'''
+    time.sleep(0.5)
     start = time.time()
     long = 10.0
 
@@ -74,6 +75,12 @@ def _base64_getheader(filename):
     }
     return switch[ex]
 
+def end(imgname):
+    '''删除本地结果'''
+    result = psresult+imgname
+    source = psworkspace+imgname
+    os.remove(result)
+    os.remove(source)
 
 #program
 '''
@@ -83,9 +90,11 @@ def _base64_getheader(filename):
 3. 图片转base64
 4. gui
 '''
-imgname = download_img("https://cdn.v2ex.com/avatar/b8e4/befb/18748_large.png",'')
-dops_toweb()
-imgpath = psresult+imgname
-tryfile(imgpath)
-result = dobase64(imgpath)
-print(result)
+if __name__ == "__main__":
+    imgname = download_img("https://cdn.v2ex.com/avatar/b8e4/befb/18748_large.png",'')
+    dops_toweb()
+    imgpath = psresult+imgname
+    tryfile(imgpath)
+    result = dobase64(imgpath)
+    end(imgname)
+    print(result)
