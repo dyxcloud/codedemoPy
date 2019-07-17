@@ -57,23 +57,37 @@ class Application(Application_ui):
         Application_ui.__init__(self, master)
 
     def doupload(self, event=None):
-        #TODO, Please finish the function here!
-        pass
+        check = int(self.data_checkps.get())
+        if check:
+            result = mytool.work_file_ps("")
+        else:
+            result = mytool.work_file("")
+        self.Text2.insert(END,result)
 
     def dotrans(self, event=None):
         dataurl = self.data_url.get()
-        
-        imgname = mytool.download_img(dataurl,"")
-        mytool.dops_toweb()
-        imgpath = mytool.psresult+imgname
-        mytool.tryfile(imgpath)
-        result = mytool.dobase64(imgpath)
-        mytool.end(imgname)
-
+        check = int(self.data_checkps.get())
+        if check:
+            result = mytool.work_url_ps(dataurl)
+        else:
+            result = mytool.work_url(dataurl)
         self.Text2.insert(END,result)
 
+def addToClipBoard(text):
+    command = 'echo ' + text.strip() + '| clip'
+    os.system(command)
+
+def add2(text):
+    r = Tk()
+    r.withdraw()
+    r.clipboard_clear()
+    r.clipboard_append('i can has clipboardz?')
+    r.update() # now it stays on the clipboard after the window is closed
+    r.destroy()
+
 if __name__ == "__main__":
-    top = Tk()
-    Application(top).mainloop()
-    try: top.destroy()
-    except: pass
+    # top = Tk()
+    # Application(top).mainloop()
+    # try: top.destroy()
+    # except: pass
+    addToClipBoard("this is my text")

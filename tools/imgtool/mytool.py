@@ -90,6 +90,14 @@ def work_url(url):
 
 def work_url_ps(url):
     pass
+    imgname = download_img(url,'')
+    dops_toweb()
+    imgpath = psresult+imgname
+    tryfile(imgpath)
+    result = dobase64(imgpath)
+    end(imgname)
+    return result
+
 
 def work_file(filepath):
     pass
@@ -107,10 +115,5 @@ def work_file_ps(filepath):
 4. gui
 '''
 if __name__ == "__main__":
-    imgname = download_img("https://cdn.v2ex.com/avatar/b8e4/befb/18748_large.png",'')
-    dops_toweb()
-    imgpath = psresult+imgname
-    tryfile(imgpath)
-    result = dobase64(imgpath)
-    end(imgname)
+    
     print(result)
