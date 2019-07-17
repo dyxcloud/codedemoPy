@@ -6,7 +6,7 @@ from tkinter.font import Font
 from tkinter.messagebox import *
 from tkinter.ttk import *
 
-from tools.imgtool import mytool
+import mytool
 
 #import tkinter.filedialog as tkFileDialog
 #import tkinter.simpledialog as tkSimpleDialog    #askstring()
@@ -62,7 +62,6 @@ class Application(Application_ui):
 
     def dotrans(self, event=None):
         dataurl = self.data_url.get()
-
         
         imgname = mytool.download_img(dataurl,"")
         mytool.dops_toweb()

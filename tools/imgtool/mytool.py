@@ -10,6 +10,7 @@ psresult = psworkspace + "result/"
 def download_img(img_url, api_token):
     '''下载图片'''
     #TODO 去除url参数
+    #TODO 根据content type 判断文件类型
     header = {"Authorization": "Bearer " + api_token} # 设置http header
     request = urllib.request.Request(img_url, headers=header)
     try:
@@ -25,6 +26,7 @@ def download_img(img_url, api_token):
 
 def dops_toweb():
     '''操作photoshop'''
+    #TODO 最小化操作
     app = Application().connect(class_name="Photoshop",title="Adobe Photoshop CC 2019")
     win = app.top_window()
     win.type_keys("%f")
@@ -35,28 +37,29 @@ def dops_toweb():
 
 def tryfile(filepath):
     '''自旋10秒,判断文件是否导出完毕'''
-    time.sleep(0.5)
+    #TODO 需要改进
+    time.sleep(1)
     start = time.time()
     long = 10.0
 
-    isnot_exist = True
-    while time.time()-start<long and isnot_exist:
-        isnot_exist = not os.path.exists(filepath)
+    # isnot_exist = True
+    # while time.time()-start<long and isnot_exist:
+    #     isnot_exist = not os.path.exists(filepath)
 
-    isnot_exist = True
-    while time.time()-start<long and isnot_exist:
-        size = not os.path.getsize(filepath)
-        if size>10 :
-            isnot_exist = False
+    # isnot_exist = True
+    # while time.time()-start<long and isnot_exist:
+    #     size = not os.path.getsize(filepath)
+    #     if size>10 :
+    #         isnot_exist = False
 
-    isnot_exist = True
-    while time.time()-start<long and isnot_exist:
-        try:
-            f =open(filepath,"ab")
-            f.close()
-            isnot_exist = False
-        except IOError:
-            print("File is not accessible")
+    # isnot_exist = True
+    # while time.time()-start<long and isnot_exist:
+    #     try:
+    #         f =open(filepath,"ab")
+    #         f.close()
+    #         isnot_exist = False
+    #     except IOError:
+    #         print("File is not accessible")
 
 def dobase64(filename):
     '''本地图片转base64'''
@@ -81,6 +84,19 @@ def end(imgname):
     source = psworkspace+imgname
     os.remove(result)
     os.remove(source)
+
+def work_url(url):
+    pass
+
+def work_url_ps(url):
+    pass
+
+def work_file(filepath):
+    pass
+
+def work_file_ps(filepath):
+    pass
+
 
 #program
 '''
