@@ -3,7 +3,8 @@ import time
 import urllib.request
 from base64 import b64encode
 
-from pywinauto.application import Application
+from tools.imgtool import pscontrol
+
 
 psworkspace = r"C:/WorkSpace/photoshop/"
 psresult = psworkspace + "result/"
@@ -26,23 +27,15 @@ def download_img(img_url, api_token):
     except:
         return "failed"
 
-def dops_toweb():
-    '''操作photoshop'''
-    # TODO 最小化操作
-    app = Application().connect(class_name="Photoshop", title="Adobe Photoshop CC 2019")
-    win = app.top_window()
-    win.type_keys("%f")
-    win.type_keys("ub")
-    win.type_keys("{ENTER}")
-    win.minimize()
-    # print("done!")
+def compression():
+    pass
 
 def getpngname(filename):
     name = os.path.splitext(filename)[0]
     return name+".png"
 
 
-def tryfile(filepath):
+def _tryfile(filepath):
     '''自旋10秒,判断文件是否导出完毕'''
     # TODO 需要改进
     start = time.time()
@@ -84,7 +77,8 @@ def _base64_getheader(filename):
         '.gif': "data:image/gif;base64,",
         '.png': "data:image/png;base64,",
         '.jpg': "data:image/jpeg;base64,",
-        '.ico': "data:image/x-icon;base64,"
+        '.ico': "data:image/x-icon;base64,",
+        '.webp': "data:image/webp;base64,"
     }
     return switch[ex]
 
@@ -95,9 +89,9 @@ def work_url(url):
 
 def work_url_ps(url):
     imgname = download_img(url, '')
-    dops_toweb()
+    pscontrol.dops_toweb()
     result_img_path = psresult+getpngname(imgname)
-    tryfile(result_img_path)
+    _tryfile(result_img_path)
     result = dobase64(result_img_path)
     os.remove(psworkspace+imgname)
     os.remove(result_img_path)
@@ -121,8 +115,4 @@ def work_file_ps(filepath):
 4. gui
 '''
 if __name__ == "__main__":
-    app = Application().connect(class_name="Photoshop", title="Adobe Photoshop CC 2019")
-    win = app.top_window()
-    win.type_keys("^o")
-    # win.minimize()
     print()

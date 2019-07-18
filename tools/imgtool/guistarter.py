@@ -6,7 +6,7 @@ from tkinter.font import Font
 from tkinter.messagebox import *
 from tkinter.ttk import *
 
-import mytool
+from tools.imgtool import mytool
 
 #import tkinter.filedialog as tkFileDialog
 #import tkinter.simpledialog as tkSimpleDialog    #askstring()
