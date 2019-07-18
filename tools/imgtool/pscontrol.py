@@ -2,7 +2,6 @@ from pywinauto.application import Application
 
 def dops_toweb():
     '''操作photoshop'''
-    # TODO 最小化操作
     app = Application().connect(class_name="Photoshop", title="Adobe Photoshop CC 2019")
     win = app.top_window()
     win.type_keys("%f")

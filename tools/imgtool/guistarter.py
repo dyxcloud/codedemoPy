@@ -42,13 +42,13 @@ class Application_ui(Frame):
         self.Check1.place(relx=0.079, rely=0.257, relwidth=0.042, relheight=0.115)
 
         self.style.configure('Label1.TLabel',anchor='w', font=('微软雅黑',9))
-        self.Label1 = Label(self.top, text='使用PSCC进行图片压缩', style='Label1.TLabel')
+        self.Label1 = Label(self.top, text='进行图片压缩', style='Label1.TLabel')
         self.Label1.place(relx=0.118, rely=0.294, relwidth=0.475, relheight=0.115)
 
-        #self.data_result = StringVar(value='')
-        self.Text2 = scrolledtext.ScrolledText(self.top, width=50, height=6,font=("微软雅黑",9))
-        #self.Text2 = Entry(self.top, textvariable=self.data_result, font=('微软雅黑',9))
-        self.Text2.place(relx=0.039, rely=0.44)
+        self.copytext = StringVar(value='点击复制')
+        self.style.configure('Command2.TButton',font=('微软雅黑',9))
+        self.Command3 = Button(self.top, textvariable =self.copytext, command=self.docopy, style='Command3.TButton')
+        self.Command3.place(relx=0.118, rely=0.500, relwidth=0.500, relheight=0.200)
 
 
 class Application(Application_ui):
@@ -56,41 +56,52 @@ class Application(Application_ui):
     def __init__(self, master=None):
         Application_ui.__init__(self, master)
 
+    result = ""
+
     def doupload(self, event=None):
+        self.copytext.set("making...")
         check = int(self.data_checkps.get())
         if check:
-            result = mytool.work_file_compression("")
+            self.result = mytool.work_file_compression("")
         else:
-            result = mytool.work_file("")
-        self.Text2.delete(1.0,END)
-        self.Text2.insert(END,result)
-        addToClipBoard(result)
+            self.result = mytool.work_file("")
+        if len(self.result)>50:
+            addToClipBoard(self.result)
+            self.copytext.set("点击复制")
+        else:
+            self.copytext.set("fail!")
 
     def dotrans(self, event=None):
+        self.copytext.set("making...")
         dataurl = self.data_url.get()
         check = int(self.data_checkps.get())
         if check:
-            result = mytool.work_url_compression(dataurl)
+            self.result = mytool.work_url_compression(dataurl)
         else:
-            result = mytool.work_url(dataurl)
-        self.Text2.delete(1.0,END)
-        self.Text2.insert(END,result)
-        addToClipBoard(result)
+            self.result = mytool.work_url(dataurl)
+        if len(self.result)>50:
+            addToClipBoard(self.result)
+            self.copytext.set("点击复制")
+        else:
+            self.copytext.set("fail!")
+    
+    def docopy(self, even=None):
+        addToClipBoard(self.result)
+
 
 def addToClipBoard(text):
-    command = 'echo ' + text.strip() + '| clip'
-    os.system(command)
-
-def addToClipBoard2(text):
-    r = Tk()
-    r.withdraw()
-    r.clipboard_clear()
-    r.clipboard_append(text)
-    r.update() # now it stays on the clipboard after the window is closed
-    r.destroy()
+        # command = 'echo ' + text + '| clip'
+        # os.system(command)
+        r = Tk()
+        r.withdraw()
+        r.clipboard_clear()
+        r.clipboard_append(text)
+        r.update()
+        r.destroy()
 
 if __name__ == "__main__":
+    #text很卡
+    #换成复制按钮
     top = Tk()
     Application(top).mainloop()
-    try: top.destroy()
-    except: pass
+    top.destroy()
