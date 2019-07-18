@@ -59,7 +59,7 @@ class Application(Application_ui):
     def doupload(self, event=None):
         check = int(self.data_checkps.get())
         if check:
-            result = mytool.work_file_ps("")
+            result = mytool.work_file_compression("")
         else:
             result = mytool.work_file("")
         self.Text2.delete(1.0,END)
@@ -70,7 +70,7 @@ class Application(Application_ui):
         dataurl = self.data_url.get()
         check = int(self.data_checkps.get())
         if check:
-            result = mytool.work_url_ps(dataurl)
+            result = mytool.work_url_compression(dataurl)
         else:
             result = mytool.work_url(dataurl)
         self.Text2.delete(1.0,END)

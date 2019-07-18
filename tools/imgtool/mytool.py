@@ -1,13 +1,16 @@
 import os
-import time
+
 import urllib.request
 from base64 import b64encode
 
-from tools.imgtool import pscontrol
+from tools.imgtool import imgcompression
 
 
 psworkspace = r"C:/WorkSpace/photoshop/"
 psresult = psworkspace + "result/"
+#初始化工作目录
+if not os.path.exists(psresult):
+    os.mkdir(psresult)
 
 
 def download_img(img_url, api_token):
@@ -27,40 +30,12 @@ def download_img(img_url, api_token):
     except:
         return "failed"
 
-def compression():
-    pass
-
-def getpngname(filename):
+def filename_change(filename,ex):
+    '''更改后缀名,ex=png'''
     name = os.path.splitext(filename)[0]
-    return name+".png"
+    return name+"."+ex
 
 
-def _tryfile(filepath):
-    '''自旋10秒,判断文件是否导出完毕'''
-    # TODO 需要改进
-    start = time.time()
-    long = 10.0
-
-    # isnot_exist = True
-    # while time.time()-start<long and isnot_exist:
-    #     isnot_exist = not os.path.exists(filepath)
-
-    time.sleep(1)
-
-    # isnot_exist = True
-    # while time.time()-start<long and isnot_exist:
-    #     size = not os.path.getsize(filepath)
-    #     if size>10 :
-    #         isnot_exist = False
-
-    # isnot_exist = True
-    # while time.time()-start<long and isnot_exist:
-    #     try:
-    #         f =open(filepath,"ab")
-    #         f.close()
-    #         isnot_exist = False
-    #     except IOError:
-    #         print("File is not accessible")
 
 
 def dobase64(filename):
@@ -68,7 +43,6 @@ def dobase64(filename):
     with open(filename, "rb") as f:  # 转为二进制格式
         data = b64encode(f.read())  # 使用base64进行加密
         return _base64_getheader(filename)+data.decode()
-
 
 def _base64_getheader(filename):
     '''获取base64头'''
@@ -87,22 +61,22 @@ def work_url(url):
     pass
 
 
-def work_url_ps(url):
+def work_url_compression(url):
     imgname = download_img(url, '')
-    pscontrol.dops_toweb()
-    result_img_path = psresult+getpngname(imgname)
-    _tryfile(result_img_path)
-    result = dobase64(result_img_path)
-    os.remove(psworkspace+imgname)
-    os.remove(result_img_path)
-    return result
+    source_path = psworkspace+imgname
+    result_path = psresult+filename_change(imgname,"webp")
+    imgcompression.compression(source_path,result_path)
+    result_line = dobase64(result_path)
+    os.remove(source_path)
+    os.remove(result_path)
+    return result_line
 
 
 def work_file(filepath):
     pass
 
 
-def work_file_ps(filepath):
+def work_file_compression(filepath):
     pass
 
 
@@ -115,4 +89,5 @@ def work_file_ps(filepath):
 4. gui
 '''
 if __name__ == "__main__":
+
     print()
