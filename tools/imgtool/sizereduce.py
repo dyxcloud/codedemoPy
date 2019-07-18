@@ -4,8 +4,9 @@ import time
 #from tools.imgtool import pscontrol
 
 def _tryfile(filepath):
-    '''自旋10秒,判断文件是否导出完毕'''
-    # TODO 需要改进
+    '''自旋10秒,判断文件是否导出完毕
+    TODO 供ps生成, 需要改进
+    '''
     start = time.time()
     long = 10.0
 
@@ -46,6 +47,7 @@ def _towebp(source, result):
     os.system(commond)
 
 def _topng(source, result):
+    #TODO 使用pngquant转换
     pass
 
 if __name__ == "__main__":

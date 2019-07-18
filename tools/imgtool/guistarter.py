@@ -16,7 +16,7 @@ class Application_ui(Frame):
     def __init__(self, master=None):
         Frame.__init__(self, master)
         self.master.title('图片转Base64')
-        self.master.geometry('406x218')
+        self.master.geometry('406x150')
         self.createWidgets()
 
     def createWidgets(self):
@@ -26,29 +26,29 @@ class Application_ui(Frame):
 
         self.data_url = StringVar(value='')
         self.Text1 = Entry(self.top, textvariable=self.data_url, font=('微软雅黑',9))
-        self.Text1.place(relx=0.039, rely=0.073, relwidth=0.495, relheight=0.188)
+        self.Text1.place(relx=0.040, rely=0.070, relwidth=0.500, relheight=0.180)
 
         self.style.configure('Command1.TButton',font=('微软雅黑',9))
         self.Command1 = Button(self.top, text='上传', command=self.doupload, style='Command1.TButton')
-        self.Command1.place(relx=0.571, rely=0.073, relwidth=0.121, relheight=0.188)
+        self.Command1.place(relx=0.571, rely=0.070, relwidth=0.120, relheight=0.180)
 
         self.style.configure('Command2.TButton',font=('微软雅黑',9))
         self.Command2 = Button(self.top, text='转换', command=self.dotrans, style='Command2.TButton')
-        self.Command2.place(relx=0.729, rely=0.073, relwidth=0.239, relheight=0.188)
+        self.Command2.place(relx=0.730, rely=0.070, relwidth=0.230, relheight=0.180)
 
         self.data_checkps = StringVar(value='0')
         self.style.configure('Check1.TCheckbutton',font=('微软雅黑',9))
-        self.Check1 = Checkbutton(self.top, text='Check1', variable=self.data_checkps, style='Check1.TCheckbutton')
-        self.Check1.place(relx=0.079, rely=0.257, relwidth=0.042, relheight=0.115)
+        self.Check1 = Checkbutton(self.top, text='进行图片压缩', variable=self.data_checkps, style='Check1.TCheckbutton')
+        self.Check1.place(relx=0.040, rely=0.300, relwidth=0.400, relheight=0.150)
 
-        self.style.configure('Label1.TLabel',anchor='w', font=('微软雅黑',9))
-        self.Label1 = Label(self.top, text='进行图片压缩', style='Label1.TLabel')
-        self.Label1.place(relx=0.118, rely=0.294, relwidth=0.475, relheight=0.115)
+        # self.style.configure('Label1.TLabel',anchor='w', font=('微软雅黑',9))
+        # self.Label1 = Label(self.top, text='进行图片压缩', style='Label1.TLabel')
+        # self.Label1.place(relx=0.120, rely=0.300, relwidth=0.500, relheight=0.150)
 
         self.copytext = StringVar(value='点击复制')
         self.style.configure('Command2.TButton',font=('微软雅黑',9))
         self.Command3 = Button(self.top, textvariable =self.copytext, command=self.docopy, style='Command3.TButton')
-        self.Command3.place(relx=0.118, rely=0.500, relwidth=0.500, relheight=0.200)
+        self.Command3.place(relx=0.040, rely=0.500, relwidth=0.920, relheight=0.430)
 
 
 class Application(Application_ui):
@@ -62,12 +62,12 @@ class Application(Application_ui):
         self.copytext.set("making...")
         check = int(self.data_checkps.get())
         if check:
-            self.result = mytool.work_file_compression("")
+            self.result,showlen = mytool.work_file_compression("")
         else:
-            self.result = mytool.work_file("")
+            self.result,showlen = mytool.work_file("")
         if len(self.result)>50:
             addToClipBoard(self.result)
-            self.copytext.set("点击复制")
+            self.copytext.set("点击复制, "+showlen)
         else:
             self.copytext.set("fail!")
 
@@ -76,12 +76,12 @@ class Application(Application_ui):
         dataurl = self.data_url.get()
         check = int(self.data_checkps.get())
         if check:
-            self.result = mytool.work_url_compression(dataurl)
+            self.result,showlen = mytool.work_url_compression(dataurl)
         else:
-            self.result = mytool.work_url(dataurl)
+            self.result,showlen = mytool.work_url(dataurl)
         if len(self.result)>50:
             addToClipBoard(self.result)
-            self.copytext.set("点击复制")
+            self.copytext.set("点击复制, "+showlen)
         else:
             self.copytext.set("fail!")
     

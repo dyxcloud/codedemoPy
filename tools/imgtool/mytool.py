@@ -41,8 +41,11 @@ def _base64_getheader(filename):
 
 def work_url(url):
     response,imgname = downloader.get_response_imgname(url)
-    result_line = dobase64_with_bytes(response.read(),imgname)
-    return result_line
+    bytes = response.read()
+    result_line = dobase64_with_bytes(bytes,imgname)
+    s = "{:.2f}".format(len(bytes)/1024.0)
+    showlen = "size nochange {}k to {}k".format(s,s)
+    return result_line,showlen
 
 def work_url_compression(url):
     imgname = downloader.download_img(url)
@@ -50,18 +53,18 @@ def work_url_compression(url):
     result_path = psresult+filename_change(imgname,"webp")
     sizereduce.compression(source_path,result_path)
     result_line = dobase64(result_path)
+    s = "{:.2f}".format(os.path.getsize(source_path)/1024.0)
+    r = "{:.2f}".format(os.path.getsize(result_path)/1024.0)
+    showlen = "img_size {}k to {}k".format(s,r)
     os.remove(source_path)
     os.remove(result_path)
-    return result_line
-
+    return result_line,showlen
 
 def work_file(filepath):
     pass
 
-
 def work_file_compression(filepath):
     pass
-
 
 # program
 '''
