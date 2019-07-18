@@ -41,10 +41,6 @@ class Application_ui(Frame):
         self.Check1 = Checkbutton(self.top, text='进行图片压缩', variable=self.data_checkps, style='Check1.TCheckbutton')
         self.Check1.place(relx=0.040, rely=0.300, relwidth=0.400, relheight=0.150)
 
-        # self.style.configure('Label1.TLabel',anchor='w', font=('微软雅黑',9))
-        # self.Label1 = Label(self.top, text='进行图片压缩', style='Label1.TLabel')
-        # self.Label1.place(relx=0.120, rely=0.300, relwidth=0.500, relheight=0.150)
-
         self.copytext = StringVar(value='点击复制')
         self.style.configure('Command2.TButton',font=('微软雅黑',9))
         self.Command3 = Button(self.top, textvariable =self.copytext, command=self.docopy, style='Command3.TButton')
@@ -101,7 +97,6 @@ def addToClipBoard(text):
 
 if __name__ == "__main__":
     #text很卡
-    #换成复制按钮
     top = Tk()
     Application(top).mainloop()
     top.destroy()
