@@ -1,4 +1,5 @@
 import os
+import re
 import urllib.request
 
 from tools.imgtool import mytool
@@ -15,8 +16,10 @@ content_types = {
 
 def _get_name_from_url(url,contenttype):
     #文件名
-    end = url.index("?")-1
-    name = url[:end]
+    pattern = re.compile(r"\?.*")
+    name = re.sub(pattern,"",url)
+    # end = url.index("?")-1
+    # name = url[:end]
     name = name.rpartition("/")[2]
     # 根据content type 判断文件类型
     if contenttype in content_types:
@@ -52,7 +55,7 @@ def download_img(img_url):
 
 
 if __name__ == "__main__":
-    name = _get_name_from_url("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1563513452305&di=e06b6b2dbf1d56c4fc82c709a4705671&imgtype=0&src=http%3A%2F%2Fimg3.redocn.com%2Ftupian%2F20150210%2Flvsejiantouppttubiao_3854182.jpg","")
+    name = _get_name_from_url("https://upload-images.jianshu.io/upload_images/5831473-8898ffb67b096b56.png","")
     print(name)
     # print(content_types.values)
     
