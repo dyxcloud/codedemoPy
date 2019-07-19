@@ -39,7 +39,8 @@ def compression(source, result,is_to_png = False):
     if is_to_png:
         if not source.endswith(".png"):
             _convert(source,result)
-        _topng(result,result)
+            source = result
+        _topng(source,result)
     else:
         _towebp(source,result)
 
