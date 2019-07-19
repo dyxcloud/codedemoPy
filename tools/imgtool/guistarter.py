@@ -36,17 +36,17 @@ class Application_ui(Frame):
         self.Command2 = Button(self.top, text='转换', command=self.dotrans, style='Command2.TButton')
         self.Command2.place(relx=0.730, rely=0.070, relwidth=0.230, relheight=0.180)
 
-        # 选择框
-        # self.data_checkps = StringVar(value='0')
-        # self.style.configure('Check1.TCheckbutton',font=('微软雅黑',9))
-        # self.Check1 = Checkbutton(self.top, text='进行图片压缩', variable=self.data_checkps, style='Check1.TCheckbutton')
-        # self.Check1.place(relx=0.040, rely=0.300, relwidth=0.400, relheight=0.150)
-
         #下拉
         self.Combo1List = ['不压缩','压缩至webp','压缩至png']
         self.Combo1 = Combobox(self.top,state="readonly", values=self.Combo1List, font=('微软雅黑',9))
         self.Combo1.current(0)
         self.Combo1.place(relx=0.040, rely=0.300, relwidth=0.400, relheight=0.150)
+
+        # 选择框
+        self.auto_compress = StringVar(value='1')
+        self.style.configure('Check1.TCheckbutton',font=('微软雅黑',9))
+        self.Check1 = Checkbutton(self.top, text='小于60k不压缩', variable=self.auto_compress, style='Check1.TCheckbutton')
+        self.Check1.place(relx=0.480, rely=0.300, relwidth=0.400, relheight=0.150)
 
         self.copytext = StringVar(value='点击复制')
         self.style.configure('Command2.TButton',font=('微软雅黑',9))
@@ -80,8 +80,9 @@ class Application(Application_ui):
         dataurl = self.data_url.get()
         checkdata = self.Combo1.get()
         checkindex = self.Combo1List.index(checkdata)
-        self.result,showlen = mytool.work_url(dataurl,checkindex)
-        
+        ifauto = int(self.auto_compress.get())
+
+        self.result,showlen = mytool.work_url(dataurl,checkindex,ifauto)
         if len(self.result)>50:
             addToClipBoard(self.result)
             self.copytext.set("点击复制, "+showlen)

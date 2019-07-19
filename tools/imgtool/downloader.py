@@ -39,12 +39,15 @@ def get_response_imgname(img_url):
         print("request fail!")
         return None,None
 
+def download_by_bytes(bytes,filename):
+    with open(filename, "wb") as f:
+        f.write(bytes)
+
 def download_img(img_url):
     '''下载图片'''
     response,img_name = get_response_imgname(img_url)
     filename = mytool.psworkspace + img_name
-    with open(filename, "wb") as f:
-        f.write(response.read())
+    download_by_bytes(response,filename)
     return img_name
 
 
