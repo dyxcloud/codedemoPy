@@ -64,9 +64,17 @@ class Application(Application_ui):
 
     def doupload(self, event=None):
         local_file_path = filedialog.askopenfilename(title='上传', filetypes=[('image', '*.jpg;*.jpeg;*.png;*.gif;*.ico;*.bmp;*.webp'), ('All Files', '*')])
-        print(local_file_path)
+        self.copytext.set("making...")
+        checkdata = self.Combo1.get()
+        checkindex = self.Combo1List.index(checkdata)
+        ifauto = int(self.auto_compress.get())
 
-        pass
+        self.result,showlen = mytool.work_file(local_file_path,checkindex,ifauto)
+        if len(self.result)>50:
+            addToClipBoard(self.result)
+            self.copytext.set("点击复制, "+showlen)
+        else:
+            self.copytext.set("fail!")
 
     def dotrans(self, event=None):
         self.copytext.set("making...")

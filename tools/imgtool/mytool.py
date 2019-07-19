@@ -65,11 +65,28 @@ def work_url(url,index,ifauto):
         os.remove(result_path)
     return result_line,showlen
 
-def work_file(filepath):
-    pass
+def work_file(source_path,index,ifauto):
+    '''0不压缩,1webp,2png'''
+    imgname = os.path.basename(source_path)
+    s = "{:.2f}".format(os.path.getsize(source_path)/1024.0)
+    if ifauto and os.path.getsize(source_path) < 60*1024:
+        index = 0
+    if index==0:
+        result_line = dobase64(source_path)
+        showlen = "nochange {}k".format(s,s)
+    else:
+        is_to_png = index==2
+        if is_to_png:
+            result_path = psresult+filename_change(imgname,"png")
+        else:
+            result_path = psresult+filename_change(imgname,"webp")
+        sizereduce.compression(source_path,result_path,is_to_png)
+        result_line = dobase64(result_path)
+        r = "{:.2f}".format(os.path.getsize(result_path)/1024.0)
+        showlen = "img_size {}k to {}k".format(s,r)
+        os.remove(result_path)
+    return result_line,showlen
 
-def work_file_compression(filepath):
-    pass
 
 # program
 '''
