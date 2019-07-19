@@ -106,4 +106,4 @@ def addToClipBoard(text):
 if __name__ == "__main__":
     top = Tk()
     Application(top).mainloop()
-    top.destroy()
+    # top.destroy()

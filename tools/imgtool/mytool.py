@@ -81,6 +81,5 @@ def work_file_compression(filepath):
 '''
 if __name__ == "__main__":
     #TODO 本地上传模式
-    #TODO gui下拉质量值
     re = work_url("https://images2017.cnblogs.com/blog/828214/201710/828214-20171007083032318-501050226.png")
     print(len(re))
