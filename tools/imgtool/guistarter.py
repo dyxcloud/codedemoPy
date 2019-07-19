@@ -2,6 +2,7 @@ import os
 import sys
 from tkinter import *
 from tkinter import scrolledtext
+from tkinter import filedialog
 from tkinter.font import Font
 from tkinter.messagebox import *
 from tkinter.ttk import *
@@ -62,17 +63,9 @@ class Application(Application_ui):
     result = ""
 
     def doupload(self, event=None):
-        # self.copytext.set("making...")
-        # check = int(self.data_checkps.get())
-        # if check:
-        #     self.result,showlen = mytool.work_file_compression("")
-        # else:
-        #     self.result,showlen = mytool.work_file("")
-        # if len(self.result)>50:
-        #     addToClipBoard(self.result)
-        #     self.copytext.set("点击复制, "+showlen)
-        # else:
-        #     self.copytext.set("fail!")
+        local_file_path = filedialog.askopenfilename(title='上传', filetypes=[('image', '*.jpg;*.jpeg;*.png;*.gif;*.ico;*.bmp;*.webp'), ('All Files', '*')])
+        print(local_file_path)
+
         pass
 
     def dotrans(self, event=None):
