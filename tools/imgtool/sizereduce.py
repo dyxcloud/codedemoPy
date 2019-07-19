@@ -32,12 +32,16 @@ def _tryfile(filepath):
     #         print("File is not accessible")
 
 
-def compression(source, result):
+def compression(source, result,is_to_png = False):
     #暂不使用ps
     #pscontrol.dops_toweb()
     #_tryfile(result_path)
-    #TODO 类型判断
-    _towebp(source,result)
+    if is_to_png:
+        if not source.endswith(".png"):
+            _convert(source,result)
+        _topng(result,result)
+    else:
+        _towebp(source,result)
 
 def _towebp(source, result):
     if os.path.splitext(source)[1]==".gif":
@@ -47,6 +51,10 @@ def _towebp(source, result):
         # commond = "cwebp.exe -q 30 -m 6 -mt {} -o {}".format(source,result)
     os.system(commond)
 
+def _convert(source,result):
+    commond="convert.exe  \"{}\" \"{}\"".format(source,result)
+    os.system(commond)
+
 def _topng(source, result):
     #使用pngquant转换,图源只支持png
     if os.path.splitext(source)[1]==".png":
@@ -54,6 +62,6 @@ def _topng(source, result):
     os.system(commond)
 
 if __name__ == "__main__":
-    s = r"D:\Download\timg2.png"
-    r = r"D:\Download\timg2new.png"
+    s = r"D:\Download\timg.png"
+    r = r"D:\Download\timgnew.png"
     _topng(s,r)

@@ -39,25 +39,29 @@ def _base64_getheader(filename):
     return base64headers[ex]
 
 
-def work_url(url):
-    response,imgname = downloader.get_response_imgname(url)
-    bytes = response.read()
-    result_line = dobase64_with_bytes(bytes,imgname)
-    s = "{:.2f}".format(len(bytes)/1024.0)
-    showlen = "size nochange {}k to {}k".format(s,s)
-    return result_line,showlen
-
-def work_url_compression(url):
-    imgname = downloader.download_img(url)
-    source_path = psworkspace+imgname
-    result_path = psresult+filename_change(imgname,"webp")
-    sizereduce.compression(source_path,result_path)
-    result_line = dobase64(result_path)
-    s = "{:.2f}".format(os.path.getsize(source_path)/1024.0)
-    r = "{:.2f}".format(os.path.getsize(result_path)/1024.0)
-    showlen = "img_size {}k to {}k".format(s,r)
-    os.remove(source_path)
-    os.remove(result_path)
+def work_url(url,index):
+    '''0不压缩,1webp,2png'''
+    if index==0:
+        response,imgname = downloader.get_response_imgname(url)
+        bytes = response.read()
+        result_line = dobase64_with_bytes(bytes,imgname)
+        s = "{:.2f}".format(len(bytes)/1024.0)
+        showlen = "size nochange {}k to {}k".format(s,s)
+    else:
+        imgname = downloader.download_img(url)
+        source_path = psworkspace+imgname
+        is_to_png = index==2
+        if is_to_png:
+            result_path = psresult+filename_change(imgname,"png")
+        else:
+            result_path = psresult+filename_change(imgname,"webp")
+        sizereduce.compression(source_path,result_path,is_to_png)
+        result_line = dobase64(result_path)
+        s = "{:.2f}".format(os.path.getsize(source_path)/1024.0)
+        r = "{:.2f}".format(os.path.getsize(result_path)/1024.0)
+        showlen = "img_size {}k to {}k".format(s,r)
+        os.remove(source_path)
+        os.remove(result_path)
     return result_line,showlen
 
 def work_file(filepath):
@@ -76,7 +80,6 @@ def work_file_compression(filepath):
 '''
 if __name__ == "__main__":
     #TODO 自动根据尺寸判断是否压缩
-    #TODO png模式 webp模式 gif全转webp
     #TODO 本地上传模式
     #TODO gui下拉质量值
     re = work_url("https://images2017.cnblogs.com/blog/828214/201710/828214-20171007083032318-501050226.png")

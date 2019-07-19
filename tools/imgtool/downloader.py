@@ -10,19 +10,30 @@ content_types = {
     'image/png':'.png',
     'application/x-png':'.png',
     'image/x-icon':'.ico',
-    'application/x-ico':'.ico',
+    'application/x-ico':'.ico'
 }
+
+def _get_name_from_url(url,contenttype):
+    #文件名
+    end = url.index("?")-1
+    name = url[:end]
+    name = name.rpartition("/")[2]
+    # 根据content type 判断文件类型
+    if contenttype in content_types:
+        ex = content_types[contenttype]
+    else:
+        for type in set(content_types.values()):
+            if type in url:
+                ex = type
+                break
+    return name+ex
 
 def get_response_imgname(img_url):
     request = urllib.request.Request(img_url)
     response = urllib.request.urlopen(request)
     if (response.getcode() == 200):
-        # 根据content type 判断文件类型
         contenttype = response.headers['Content-Type']
-        if contenttype in content_types:
-            img_name = os.path.basename(img_url)+content_types[contenttype]
-        else:
-            img_name = os.path.basename(img_url)
+        img_name = _get_name_from_url(img_url,contenttype)
         return response,img_name
     else:
         print("request fail!")
@@ -38,5 +49,7 @@ def download_img(img_url):
 
 
 if __name__ == "__main__":
-    download_img("https://images2017.cnblogs.com/blog/828214/201710/828214-20171007083032318-501050226.png")
+    name = _get_name_from_url("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1563513452305&di=e06b6b2dbf1d56c4fc82c709a4705671&imgtype=0&src=http%3A%2F%2Fimg3.redocn.com%2Ftupian%2F20150210%2Flvsejiantouppttubiao_3854182.jpg","")
+    print(name)
+    # print(content_types.values)
     
