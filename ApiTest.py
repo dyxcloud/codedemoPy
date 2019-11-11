@@ -1,5 +1,6 @@
-v1 = None
-v3 = ""
+a = [1,2,3]
+b = a
+b[2] = 4
 
-print(v1)
-print(v3)
+print(a)
+print(b)
