@@ -2,10 +2,11 @@ import os
 import re
 from urllib import request
 import json
+import sys
 
 
 def getFileNameList(path):
-    return list(filter(os.path.isfile,os.listdir(path)))
+    return os.listdir(path)
 
 
 re_pid = re.compile(r'(\d{8,})')
@@ -33,20 +34,23 @@ httpproxy_handler = request.ProxyHandler({'https':'127.0.0.1:25378'})
 opener = request.build_opener(httpproxy_handler)
 request.install_opener(opener)
 def _getJson(pid):
-    url = "https://www.pixiv.net/ajax/illust/"+pid+"/pages"
-    req = request.Request(url)
-    req.add_header('accept-language','zh-CN,zh;q=0.9')
-    req.add_header('cache-control','no-cache')
-    req.add_header('pragma','no-cache')
-    req.add_header('referer','https://www.pixiv.net/')
-    req.add_header('cookie',cookie)
-    req.add_header("User-Agent","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36")
-    with request.urlopen(req) as f:
-        if f.status == 200:
-            data = f.read()
-            return data.decode('utf-8')
-        else:
-            return None
+    #TODO 异常超时重试 除了200其他都会抛出异常？
+    try:
+        url = "https://www.pixiv.net/ajax/illust/"+pid+"/pages"
+        req = request.Request(url)
+        req.add_header('accept-language','zh-CN,zh;q=0.9')
+        req.add_header('cache-control','no-cache')
+        req.add_header('pragma','no-cache')
+        req.add_header('referer','https://www.pixiv.net/')
+        req.add_header('cookie',cookie)
+        req.add_header("User-Agent","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36")
+        with request.urlopen(req) as f:
+            if f.status == 200:
+                data = f.read()
+                return data.decode('utf-8') 
+    except:
+        print("Unexpected error:", sys.exc_info()[0])
+    return None
 
 def getImgList(pid,pno):
     data = _getJson(pid)
@@ -75,9 +79,10 @@ def program():
     namelist = getFileNameList(target)
     count_all = len(namelist)
     print("find {} images".format(count_all))
-    for filename in namelist:
+    for index,filename in enumerate(namelist):
         isGood = False
         pid,pno = getPID(filename)
+        print(">>{}/{}\tpid:{}\tpno:{}".format(index+1,count_all,pid,pno))
         if pid is not None:
             result = getImgList(pid,pno)
             if result is not None and len(result) is not 0:
@@ -90,10 +95,10 @@ def program():
             count_bad+=1
     print("done!\nfind {} images\ngoodFile:{}\nbadfile:{}".format(count_all,count_good,count_bad))
 
-target = r"D:\Download\p"
-resultfile = r"D:\Download\presult.txt"
-errorfile = r"D:\Download\perror.txt"
-cookie = 'first_visit_datetime_pc=2019-04-19+20%3A21%3A12; p_ab_id=5; p_ab_id_2=6; p_ab_d_id=553978108; yuid_b=QTIlAEQ; p_b_type=1; privacy_policy_agreement=1; login_bc=1; PHPSESSID=6001922_FXLI2MBFEKvBU8hvA3qvyRu3WBJvKk4v; device_token=7a4717d01537fa000404a6fe4cfbaf3f; c_type=26; a_type=0; b_type=1; tag_view_ranking=AG0hQxVDJ6~0xsDLqCEW6~CsU1y07-7D~Sbp1gmMeRy~UZootLOo57~_-agXPKuAQ~KN7uxuR89w~2EpPrOnc5S~yS_WrRrWFi~HBYFbIUAS8~UJAHVojA30~-IDD9G1jrk~gSkWaAUCID~-dlArdyvmu~npAXet7x_g~zBazw5YSRX~JvZxvIGtdk~T9AkOP6tYq~gV5ZWAcgjv~y8GNntYHsi~BU9SQkS-zU~tKWyFlqScc~K8esoIs2eW~6293srEnwa~xhUktaVjvC~1F9SMtTyiX~xZ6jtQjaj9'
+target = "D:/file/Picture/ACG/P站/webp/"
+resultfile = "D:/Download/presult.txt"
+errorfile = "D:/Download/perror.txt"
+cookie = 'p_ab_id=7; p_ab_id_2=3; PHPSESSID=6001922_908f6fe4d1044fb46fc46ce4973dd168; a_type=0; b_type=1; login_ever=yes; privacy_policy_agreement=1; first_visit_datetime_pc=2018-06-21+22%3A18%3A44; p_ab_d_id=2036277048; yuid_b=FFQJZAk; module_orders_mypage=%5B%7B%22name%22%3A%22sketch_live%22%2C%22visible%22%3Atrue%7D%2C%7B%22name%22%3A%22tag_follow%22%2C%22visible%22%3Atrue%7D%2C%7B%22name%22%3A%22recommended_illusts%22%2C%22visible%22%3Atrue%7D%2C%7B%22name%22%3A%22everyone_new_illusts%22%2C%22visible%22%3Atrue%7D%2C%7B%22name%22%3A%22following_new_illusts%22%2C%22visible%22%3Atrue%7D%2C%7B%22name%22%3A%22mypixiv_new_illusts%22%2C%22visible%22%3Atrue%7D%2C%7B%22name%22%3A%22fanbox%22%2C%22visible%22%3Atrue%7D%2C%7B%22name%22%3A%22featured_tags%22%2C%22visible%22%3Atrue%7D%2C%7B%22name%22%3A%22contests%22%2C%22visible%22%3Atrue%7D%2C%7B%22name%22%3A%22user_events%22%2C%22visible%22%3Atrue%7D%2C%7B%22name%22%3A%22sensei_courses%22%2C%22visible%22%3Atrue%7D%2C%7B%22name%22%3A%22spotlight%22%2C%22visible%22%3Atrue%7D%2C%7B%22name%22%3A%22booth_follow_items%22%2C%22visible%22%3Atrue%7D%5D; c_type=26; tag_view_ranking=RTJMXD26Ak~0xsDLqCEW6~Lt-oEicbBr~jH0uD88V6F~BU9SQkS-zU~KN7uxuR89w~EGefOqA6KB~zIv0cf5VVk~iFcW6hPGPU~i83OPEGrYw~uusOs0ipBx~OT4SuGenFI~bXMh6mBhl8~HY55MqmzzQ~K8esoIs2eW~_pwIgrV8TB~y8GNntYHsi~jhuUT0OJva~1F9SMtTyiX~bzflrFom1W~FH69TLSzdM~qvqXJkzT2e~RybylJRnhJ~KvAGITxIxH~kP7msdIeEU~B9WjdeT8q-~9wN-K8_crj~CrFcrMFJzz~vSWEvTeZc6~qiO14cZMBI~oCR2Pbz1ly~x_jB0UM4fe~Hjx7wJwsUT~Ie2c51_4Sp~Qa8ggRsDmW~nQRrj5c6w_~ThlAk1fdQu~_RfiUqtsxe~Fq4K_8PGib~Ce-EdaHA-3~v3f3nUY-vS~YYXnZO5Qu9~MzyhgX0YIu~RqSSaz6DfD~jVbzD9UyVE~tTtqnkCOkm~vFwTRLUjL6~aUKGRzPd6e~HffPWSkEm-~TOd0tpUry5~cpt_Nk5mjc~EUwzYuPRbU~azESOjmQSV~gtqKAgwYdi~Ms9Iyj7TRt~RVRPe90CVr~w8ffkPoJ_S~sFB6DB7I46~m3EJRa33xU~_K7rbjS0MD~Fk5VbBuNbw~x8zz9iDXnd~Ow9mLSvmxK~eVxus64GZU~LJo91uBPz4~uW5495Nhg-~YRDwjaiLZn~pzzjRSV6ZO~Oa9b6mEc1T~tgP8r-gOe_~90n3-8i-qU~Mezz_Dzov-~tdV2WHpK07~VMrBpQAvH4~G-1lNBdD_I~Qdur7OglM-~0AtLJn3O6r~BLhAVeDmI2~MHugbgF9Xo~rQjRwS_xRb~m0jy1M6_jR~BQFWWhxtER~uXJn-nhV4E~kHJk-sR8-P~qtVr8SCFs5~7YXtDXab1X~gooMLQqB9a~MO67n2Zm2e~HM_o2vRZZM~6-nZ_SqrnK~KLhtt3OK7r~A3_S4dm-BR~ueeKYaEKwj~LBMc5qP5TM~65aiw_5Y72~bYfigtcm_W~UBwhLy7Ngq~mPFmmA9wY_~bdsHaxGhC9~KdHKtBPyim'
 
 if __name__ == "__main__":
     #print(getImgList("61791949",None))
