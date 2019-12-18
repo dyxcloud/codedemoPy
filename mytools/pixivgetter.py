@@ -1,6 +1,7 @@
 import re
+from urllib import request
 
-#https://www.pixiv.net/ajax/illust/61791949/pages
+
 
 
 re_pid = re.compile(r'(\d{8,})')
@@ -23,6 +24,22 @@ def _test_getPID():
     print(getPID("66078530_p2.webp"))
     print(getPID("66078530.webp"))
 
+
+#https://www.pixiv.net/ajax/illust/61791949/pages
+httpproxy_handler = request.ProxyHandler({'https':'127.0.0.1:25378'})
+opener = request.build_opener(httpproxy_handler)
+request.install_opener(opener)
+def getJson(pid,pno):
+    url = "https://www.pixiv.net/ajax/illust/"+pid+"/pages"
+    req = request.Request(url)
+    req.add_header("User-Agent","Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.71 Safari/537.36")
+    with request.urlopen(req) as f:
+        data = f.read()
+        print('Status:', f.status, f.reason)
+        print('Data:', data.decode('utf-8'))
+
+
+
 if __name__ == "__main__":
-    _test_getPID()
+    getJson("61791949",None)
     pass
