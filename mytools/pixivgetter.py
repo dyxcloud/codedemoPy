@@ -1,11 +1,11 @@
+import os
 import re
 from urllib import request
 import json
 
 
 def getFileNameList(path):
-    #TODO
-    pass
+    return [filename for filename in os.listdir(path)]
 
 
 re_pid = re.compile(r'(\d{8,})')
@@ -19,6 +19,7 @@ def getPID(filename):
     mpno = re.search(re_pno,filename)
     if mpno:
         pno = mpno.group(1)
+        pno = int(pno)
     return pid,pno
 
 def _test_getPID():
@@ -26,7 +27,7 @@ def _test_getPID():
     print(getPID("62025919_シロクマA＠2日目Q-04b]週刊熊の穴#33 2B メインテナンス中P0_00000.webp"))
     print(getPID("62029906_はれんちとめこ]ﾂｲｯﾀｰ落書きまとめP1_00000.webp"))
     print(getPID("66078530_p2.webp"))
-    print(getPID("66078530.webp"))
+    print(getPID("66078531.webp"))
 
 
 #https://www.pixiv.net/ajax/illust/61791949/pages
@@ -35,8 +36,14 @@ opener = request.build_opener(httpproxy_handler)
 request.install_opener(opener)
 def _getJson(pid):
     url = "https://www.pixiv.net/ajax/illust/"+pid+"/pages"
+    print("url:{}".format(url))
     req = request.Request(url)
-    req.add_header("User-Agent","Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.71 Safari/537.36")
+    req.add_header('accept-language','zh-CN,zh;q=0.9')
+    req.add_header('cache-control','no-cache')
+    req.add_header('pragma','no-cache')
+    req.add_header('referer','https://www.pixiv.net/')
+    req.add_header('cookie',cookie)
+    req.add_header("User-Agent","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36")
     with request.urlopen(req) as f:
         if f.status == 200:
             data = f.read()
@@ -52,26 +59,24 @@ def getImgList(pid,pno):
             body = jdata['body']
             if len(body) is not 0:
                 if pno is not None:
-                    return [body[pno]['urls']['original']]
+                    if pno<len(body): return [body[pno]['urls']['original']]
                 else:
                     return [x['urls']['original'] for x in body]
     return None
 
 def cleanText(filepath):
-    #TODO
-    pass
+    if os.path.exists(filepath): os.remove(filepath)
 
 def saveText(filepath,data):
-    #TODO
-    pass
+    with open(filepath,'at') as f:
+        f.write(data+'\n')
 
+target = r"D:\Download\p"
+resultfile = r"D:\Download\presult.txt"
+errorfile = r"D:\Download\perror.txt"
+cookie = 'first_visit_datetime_pc=2019-04-19+20%3A21%3A12; p_ab_id=5; p_ab_id_2=6; p_ab_d_id=553978108; yuid_b=QTIlAEQ; p_b_type=1; privacy_policy_agreement=1; login_bc=1; PHPSESSID=6001922_FXLI2MBFEKvBU8hvA3qvyRu3WBJvKk4v; device_token=7a4717d01537fa000404a6fe4cfbaf3f; c_type=26; a_type=0; b_type=1; tag_view_ranking=AG0hQxVDJ6~0xsDLqCEW6~CsU1y07-7D~Sbp1gmMeRy~UZootLOo57~_-agXPKuAQ~KN7uxuR89w~2EpPrOnc5S~yS_WrRrWFi~HBYFbIUAS8~UJAHVojA30~-IDD9G1jrk~gSkWaAUCID~-dlArdyvmu~npAXet7x_g~zBazw5YSRX~JvZxvIGtdk~T9AkOP6tYq~gV5ZWAcgjv~y8GNntYHsi~BU9SQkS-zU~tKWyFlqScc~K8esoIs2eW~6293srEnwa~xhUktaVjvC~1F9SMtTyiX~xZ6jtQjaj9'
 def program():
-    target = ""
-    resultfile = ""
-    errorfile = ""
-    count_all = 0
-    count_good = 0
-    count_bad = 0
+    count_all,count_good,count_bad = 0,0,0
     cleanText(resultfile)
     cleanText(errorfile)
     namelist = getFileNameList(target)
@@ -95,5 +100,6 @@ def program():
 
 if __name__ == "__main__":
     #print(getImgList("61791949",None))
-    _test_getPID()
+    # list(map(print,getFileNameList(target)))
+    program()
     print("done")
