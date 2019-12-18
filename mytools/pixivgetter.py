@@ -33,7 +33,7 @@ def _test_getPID():
 httpproxy_handler = request.ProxyHandler({'https':'127.0.0.1:25378'})
 opener = request.build_opener(httpproxy_handler)
 request.install_opener(opener)
-def getJson(pid):
+def _getJson(pid):
     url = "https://www.pixiv.net/ajax/illust/"+pid+"/pages"
     req = request.Request(url)
     req.add_header("User-Agent","Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.71 Safari/537.36")
@@ -45,7 +45,7 @@ def getJson(pid):
             return None
 
 def getImgList(pid,pno):
-    data = getJson(pid)
+    data = _getJson(pid)
     if data is not None:
         jdata = json.loads(data)
         if jdata['error'] is not 'true':
@@ -57,11 +57,43 @@ def getImgList(pid,pno):
                     return [x['urls']['original'] for x in body]
     return None
 
-def program():
-    
+def cleanText(filepath):
+    #TODO
     pass
+
+def saveText(filepath,data):
+    #TODO
+    pass
+
+def program():
+    target = ""
+    resultfile = ""
+    errorfile = ""
+    count_all = 0
+    count_good = 0
+    count_bad = 0
+    cleanText(resultfile)
+    cleanText(errorfile)
+    namelist = getFileNameList(target)
+    count_all = len(namelist)
+    print("find {} images".format(count_all))
+    for filename in namelist:
+        isGood = False
+        pid,pno = getPID(filename)
+        if pid is not None:
+            result = getImgList(pid,pno)
+            if result is not None and len(result) is not 0:
+                for r in result:
+                    saveText(resultfile,r)
+                    if not isGood: count_good+=1
+                    isGood = True
+        if not isGood:
+            saveText(errorfile,filename)
+            count_bad+=1
+    print("done!")
+    print("goodFile:{}\nbadfile:{}".format(count_good,count_bad))
 
 if __name__ == "__main__":
     #print(getImgList("61791949",None))
     _test_getPID()
-    pass
+    print("done")
