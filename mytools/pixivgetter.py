@@ -5,21 +5,19 @@ import json
 
 
 def getFileNameList(path):
-    return [filename for filename in os.listdir(path)]
+    return list(filter(os.path.isfile,os.listdir(path)))
 
 
 re_pid = re.compile(r'(\d{8,})')
 re_pno = re.compile(r'(?<=[pP])(\d{1,2})')
 def getPID(filename):
-    pid=None
-    pno=None
+    pid,pno=None,None
     mpid = re.search(re_pid,filename)
     if mpid:
         pid = mpid.group(1)
     mpno = re.search(re_pno,filename)
     if mpno:
-        pno = mpno.group(1)
-        pno = int(pno)
+        pno = int(mpno.group(1))
     return pid,pno
 
 def _test_getPID():
@@ -36,7 +34,6 @@ opener = request.build_opener(httpproxy_handler)
 request.install_opener(opener)
 def _getJson(pid):
     url = "https://www.pixiv.net/ajax/illust/"+pid+"/pages"
-    print("url:{}".format(url))
     req = request.Request(url)
     req.add_header('accept-language','zh-CN,zh;q=0.9')
     req.add_header('cache-control','no-cache')
@@ -71,10 +68,6 @@ def saveText(filepath,data):
     with open(filepath,'at') as f:
         f.write(data+'\n')
 
-target = r"D:\Download\p"
-resultfile = r"D:\Download\presult.txt"
-errorfile = r"D:\Download\perror.txt"
-cookie = 'first_visit_datetime_pc=2019-04-19+20%3A21%3A12; p_ab_id=5; p_ab_id_2=6; p_ab_d_id=553978108; yuid_b=QTIlAEQ; p_b_type=1; privacy_policy_agreement=1; login_bc=1; PHPSESSID=6001922_FXLI2MBFEKvBU8hvA3qvyRu3WBJvKk4v; device_token=7a4717d01537fa000404a6fe4cfbaf3f; c_type=26; a_type=0; b_type=1; tag_view_ranking=AG0hQxVDJ6~0xsDLqCEW6~CsU1y07-7D~Sbp1gmMeRy~UZootLOo57~_-agXPKuAQ~KN7uxuR89w~2EpPrOnc5S~yS_WrRrWFi~HBYFbIUAS8~UJAHVojA30~-IDD9G1jrk~gSkWaAUCID~-dlArdyvmu~npAXet7x_g~zBazw5YSRX~JvZxvIGtdk~T9AkOP6tYq~gV5ZWAcgjv~y8GNntYHsi~BU9SQkS-zU~tKWyFlqScc~K8esoIs2eW~6293srEnwa~xhUktaVjvC~1F9SMtTyiX~xZ6jtQjaj9'
 def program():
     count_all,count_good,count_bad = 0,0,0
     cleanText(resultfile)
@@ -95,8 +88,12 @@ def program():
         if not isGood:
             saveText(errorfile,filename)
             count_bad+=1
-    print("done!")
-    print("goodFile:{}\nbadfile:{}".format(count_good,count_bad))
+    print("done!\nfind {} images\ngoodFile:{}\nbadfile:{}".format(count_all,count_good,count_bad))
+
+target = r"D:\Download\p"
+resultfile = r"D:\Download\presult.txt"
+errorfile = r"D:\Download\perror.txt"
+cookie = 'first_visit_datetime_pc=2019-04-19+20%3A21%3A12; p_ab_id=5; p_ab_id_2=6; p_ab_d_id=553978108; yuid_b=QTIlAEQ; p_b_type=1; privacy_policy_agreement=1; login_bc=1; PHPSESSID=6001922_FXLI2MBFEKvBU8hvA3qvyRu3WBJvKk4v; device_token=7a4717d01537fa000404a6fe4cfbaf3f; c_type=26; a_type=0; b_type=1; tag_view_ranking=AG0hQxVDJ6~0xsDLqCEW6~CsU1y07-7D~Sbp1gmMeRy~UZootLOo57~_-agXPKuAQ~KN7uxuR89w~2EpPrOnc5S~yS_WrRrWFi~HBYFbIUAS8~UJAHVojA30~-IDD9G1jrk~gSkWaAUCID~-dlArdyvmu~npAXet7x_g~zBazw5YSRX~JvZxvIGtdk~T9AkOP6tYq~gV5ZWAcgjv~y8GNntYHsi~BU9SQkS-zU~tKWyFlqScc~K8esoIs2eW~6293srEnwa~xhUktaVjvC~1F9SMtTyiX~xZ6jtQjaj9'
 
 if __name__ == "__main__":
     #print(getImgList("61791949",None))
