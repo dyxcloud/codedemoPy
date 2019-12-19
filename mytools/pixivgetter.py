@@ -71,8 +71,11 @@ def cleanText(filepath):
     if os.path.exists(filepath): os.remove(filepath)
 
 def saveText(filepath,data):
+    iserror = filepath == errorfile
     with open(filepath,'at') as f:
-        f.write(data+'\n')
+        f.write(data)
+        if iserror: f.write(' |')
+        f.write('\n')
 
 def program():
     count_all,count_good,count_bad = 0,0,0
@@ -97,14 +100,14 @@ def program():
             count_bad+=1
     print("done!\nfind {} images\ngoodFile:{}\nbadfile:{}".format(count_all,count_good,count_bad))
 
-target = "D:/file/Picture/ACG/P站/webp/"
+target = "D:/file/Picture/ACG/P站/"
 resultfile = "D:/Download/presult.txt"
 errorfile = "D:/Download/perror.txt"
 cookie = 'p_ab_id=7; p_ab_id_2=3; PHPSESSID=6001922_908f6fe4d1044fb46fc46ce4973dd168; a_type=0; b_type=1; login_ever=yes; privacy_policy_agreement=1; first_visit_datetime_pc=2018-06-21+22%3A18%3A44; p_ab_d_id=2036277048; yuid_b=FFQJZAk; module_orders_mypage=%5B%7B%22name%22%3A%22sketch_live%22%2C%22visible%22%3Atrue%7D%2C%7B%22name%22%3A%22tag_follow%22%2C%22visible%22%3Atrue%7D%2C%7B%22name%22%3A%22recommended_illusts%22%2C%22visible%22%3Atrue%7D%2C%7B%22name%22%3A%22everyone_new_illusts%22%2C%22visible%22%3Atrue%7D%2C%7B%22name%22%3A%22following_new_illusts%22%2C%22visible%22%3Atrue%7D%2C%7B%22name%22%3A%22mypixiv_new_illusts%22%2C%22visible%22%3Atrue%7D%2C%7B%22name%22%3A%22fanbox%22%2C%22visible%22%3Atrue%7D%2C%7B%22name%22%3A%22featured_tags%22%2C%22visible%22%3Atrue%7D%2C%7B%22name%22%3A%22contests%22%2C%22visible%22%3Atrue%7D%2C%7B%22name%22%3A%22user_events%22%2C%22visible%22%3Atrue%7D%2C%7B%22name%22%3A%22sensei_courses%22%2C%22visible%22%3Atrue%7D%2C%7B%22name%22%3A%22spotlight%22%2C%22visible%22%3Atrue%7D%2C%7B%22name%22%3A%22booth_follow_items%22%2C%22visible%22%3Atrue%7D%5D; c_type=26; tag_view_ranking=RTJMXD26Ak~0xsDLqCEW6~Lt-oEicbBr~jH0uD88V6F~BU9SQkS-zU~KN7uxuR89w~EGefOqA6KB~zIv0cf5VVk~iFcW6hPGPU~i83OPEGrYw~uusOs0ipBx~OT4SuGenFI~bXMh6mBhl8~HY55MqmzzQ~K8esoIs2eW~_pwIgrV8TB~y8GNntYHsi~jhuUT0OJva~1F9SMtTyiX~bzflrFom1W~FH69TLSzdM~qvqXJkzT2e~RybylJRnhJ~KvAGITxIxH~kP7msdIeEU~B9WjdeT8q-~9wN-K8_crj~CrFcrMFJzz~vSWEvTeZc6~qiO14cZMBI~oCR2Pbz1ly~x_jB0UM4fe~Hjx7wJwsUT~Ie2c51_4Sp~Qa8ggRsDmW~nQRrj5c6w_~ThlAk1fdQu~_RfiUqtsxe~Fq4K_8PGib~Ce-EdaHA-3~v3f3nUY-vS~YYXnZO5Qu9~MzyhgX0YIu~RqSSaz6DfD~jVbzD9UyVE~tTtqnkCOkm~vFwTRLUjL6~aUKGRzPd6e~HffPWSkEm-~TOd0tpUry5~cpt_Nk5mjc~EUwzYuPRbU~azESOjmQSV~gtqKAgwYdi~Ms9Iyj7TRt~RVRPe90CVr~w8ffkPoJ_S~sFB6DB7I46~m3EJRa33xU~_K7rbjS0MD~Fk5VbBuNbw~x8zz9iDXnd~Ow9mLSvmxK~eVxus64GZU~LJo91uBPz4~uW5495Nhg-~YRDwjaiLZn~pzzjRSV6ZO~Oa9b6mEc1T~tgP8r-gOe_~90n3-8i-qU~Mezz_Dzov-~tdV2WHpK07~VMrBpQAvH4~G-1lNBdD_I~Qdur7OglM-~0AtLJn3O6r~BLhAVeDmI2~MHugbgF9Xo~rQjRwS_xRb~m0jy1M6_jR~BQFWWhxtER~uXJn-nhV4E~kHJk-sR8-P~qtVr8SCFs5~7YXtDXab1X~gooMLQqB9a~MO67n2Zm2e~HM_o2vRZZM~6-nZ_SqrnK~KLhtt3OK7r~A3_S4dm-BR~ueeKYaEKwj~LBMc5qP5TM~65aiw_5Y72~bYfigtcm_W~UBwhLy7Ngq~mPFmmA9wY_~bdsHaxGhC9~KdHKtBPyim'
 
 if __name__ == "__main__":
-    _test_getPID()
+    # _test_getPID()
     #print(getImgList("61791949",None))
     # list(map(print,getFileNameList(target)))
-    # program()
+    program()
     print("done")
