@@ -1,6 +1,7 @@
 import os
 import re
 from urllib import request
+from retrying import retry
 import json
 import sys
 
@@ -33,27 +34,28 @@ def _test_getPID():
 httpproxy_handler = request.ProxyHandler({'https':'127.0.0.1:25378'})
 opener = request.build_opener(httpproxy_handler)
 request.install_opener(opener)
+@retry(stop_max_attempt_number=3,wait_random_min=1000, wait_random_max=3000)
 def _getJson(pid):
-    #TODO 异常超时重试 除了200其他都会抛出异常？
-    try:
-        url = "https://www.pixiv.net/ajax/illust/"+pid+"/pages"
-        req = request.Request(url)
-        req.add_header('accept-language','zh-CN,zh;q=0.9')
-        req.add_header('cache-control','no-cache')
-        req.add_header('pragma','no-cache')
-        req.add_header('referer','https://www.pixiv.net/')
-        req.add_header('cookie',cookie)
-        req.add_header("User-Agent","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36")
-        with request.urlopen(req) as f:
-            if f.status == 200:
-                data = f.read()
-                return data.decode('utf-8') 
-    except:
-        print("Unexpected error:", sys.exc_info()[0])
+    url = "https://www.pixiv.net/ajax/illust/"+pid+"/pages"
+    req = request.Request(url)
+    req.add_header('accept-language','zh-CN,zh;q=0.9')
+    req.add_header('cache-control','no-cache')
+    req.add_header('pragma','no-cache')
+    req.add_header('referer','https://www.pixiv.net/')
+    req.add_header('cookie',cookie)
+    req.add_header("User-Agent","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36")
+    with request.urlopen(req,timeout=10) as f:
+        if f.status == 200:
+            data = f.read()
+            return data.decode('utf-8') 
     return None
 
 def getImgList(pid,pno):
-    data = _getJson(pid)
+    data = None
+    try:
+        data = _getJson(pid)
+    except:
+        print("Unexpected error:", sys.exc_info()[:2])
     if data is not None:
         jdata = json.loads(data)
         if jdata['error'] is not 'true':
