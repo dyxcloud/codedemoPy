@@ -32,7 +32,7 @@ def _parse_jav_content(content):
         print("error content!")
         print(content)
         return
-    print("start parse jav ...")
+    # print("start parse jav ...")
     content_tag = content[content.index("类别"):content.index("演员:")]
     content_star = content[content.index("演员:"):content.index("将这演员加入我最爱的演员名单")]
     content = None
@@ -48,6 +48,8 @@ def _parse_jav_content(content):
     return ",".join(result)
 
 if __name__ == "__main__":
-    result = get_jav("ABP-933")
-    print(result)
+    target = ['MVSD-301','RCT-544','STARS-171','TKI-055','XRW-796']
+    for t in target:
+        print(t)
+        print(get_jav(t))
     print("done!")
