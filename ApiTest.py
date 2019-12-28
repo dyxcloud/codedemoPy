@@ -1,5 +1,8 @@
-import re
+lblack = {'scu','kizunanosora','S-Cute','ps7','Siberian Mouse','shemaleJP','foreign','短片'}
+def _not_skip_flie(filename):
+    for b in lblack:
+        if filename.find(b)>=0:
+            return False
+    return True
 
-str1 = "123@qq.comaaa@163.combbb@126.comasdf111@asdfcom"
-print(re.findall(r'\w+@(?:qq|163|126)\.com',str1))
-print(re.match(r'\w+@(?:qq|163|126)\.com',str1).groups())
+print(_not_skip_flie('asdas短片123as'))

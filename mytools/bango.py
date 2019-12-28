@@ -2,25 +2,47 @@ import re
 import glob
 import os
 
+
+lreg = [re.compile(r"^[a-zA-Z]+\d*[-_][a-zA-Z]*\d{2,} ")
+    ,re.compile(r"^[a-zA-Z]+\d+[a-zA-Z]+[-_]\d{2,} ") #S2M-019
+    ,re.compile(r"^\d+[_-]\d{2,} ") #061315_01
+    ,re.compile(r"^\d+[_-][a-zA-Z]{3,} ") #150123-YUME
+    ,re.compile(r"^\d+[a-zA-Z]+[_-]\d{2,} ") #259LUXU-891
+    ,re.compile(r"^[a-zA-Z]+\d{2,} ") #CZ021
+]
 def get_bango(filename):
     '''获取番号'''
-    # return re.search("[a-zA-Z]+-?/d+[a-zA-Z]?",filename).group()
-    rr = re.search("[a-zA-Z]+-?\\d+", filename)
-    if(rr):
-        return rr.group()
-    else:
-        return "error when find = "+filename
+    for reg in lreg:
+        match_bango = re.search(reg, filename)
+        if match_bango:
+            return match_bango.group()
+    return "error when find = "+filename
 
 def list_file_name(filepath):
     '''获取目录下所有全路径文件名'''
-    result = []
+    result = ['kizunanosora']
     for root, dirs, files in os.walk(filepath):
         for file in files:
             r = os.path.join(root, file)
-            result.append(r)
+            if _is_video(r) and _not_skip_flie(r):
+                result.append(r)
     return result
 
-# launch
-mypath = "D:\\localFile\\h"
-for s in list_file_name(mypath):
-    print(get_bango(os.path.basename(s)))
+lvideo = {'avi','flv','mkv','mp4','rmvb','wmv'}
+def _is_video(filename):
+    ex = filename[filename.rindex('.')+1:]
+    return ex.lower() in lvideo
+
+lblack = {'scu','kizunanosora','S-Cute','ps7','Siberian Mouse','shemaleJP','foreign','短片'}
+def _not_skip_flie(filename):
+    for b in lblack:
+        if filename.find(b)>=0:
+            return False
+    return True
+
+#TODO 获取 视频和对应封面 列出没有被匹配的图片
+
+if __name__ == "__main__":
+    mypath = r"D:\Games\project"
+    for s in list_file_name(mypath):
+        print(get_bango(os.path.basename(s)))
