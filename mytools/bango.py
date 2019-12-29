@@ -1,6 +1,7 @@
 import re
 import glob
 import os
+from mytools.get_tag_by_av import get_jav,get_javbus
 
 
 lreg = [re.compile(r"^[a-zA-Z]+\d*[-_][a-zA-Z]*\d{2,} ")
@@ -47,6 +48,8 @@ if __name__ == "__main__":
     for s in list_file_name(mypath):
         bango = get_bango(os.path.basename(s))
         if bango:
-            pass
+            print(bango)
+            print(get_jav(bango))
+            # print(get_javbus(bango))
         else:
             print("error get bango: " +s)
