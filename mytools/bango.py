@@ -29,7 +29,7 @@ def list_file_name(filepath):
                 result.append(r)
     return result
 
-lvideo = {'avi','flv','mkv','mp4','rmvb','wmv'}
+lvideo = {'avi','flv','mkv','mp4','rmvb','rm','wmv','divx'}
 def _is_video(filename):
     ex = filename[filename.rindex('.')+1:]
     return ex.lower() in lvideo
@@ -46,16 +46,6 @@ def _not_skip_flie(filename):
         if filename.find(b)>=0:
             return False
     return True
-
-def print_tag_by_dir(mypath):
-    for s in list_file_name(mypath):
-        bango = get_bango(os.path.basename(s))
-        if bango:
-            print(bango)
-            print(get_jav(bango))
-            # print(get_javbus(bango))
-        else:
-            print("error get bango: " +s)
 
 
 re_img = re.compile(r"\d+")
@@ -79,10 +69,38 @@ def _is_finded(num,path):
             return True
     return False
 
+def print_tag_by_dir(mypath):
+    for s in list_file_name(mypath):
+        bango = get_bango(os.path.basename(s))
+        if bango:
+            print(bango)
+            print(get_jav(bango))
+            # print(get_javbus(bango))
+        else:
+            print("error get bango: " +s)
+    
+def print_tag_by_url():
+    urls = ['https://www.javbus.com/012617-359',
+'http://www.r40z.com/cn/?v=javliit4r4',
+'http://www.r40z.com/cn/?v=javliiyl6a',
+'http://www.r40z.com/cn/?v=javlipi3qu',
+'https://www.javbus.com/Jukujo-2610',
+'http://www.r40z.com/cn/?v=javli4tiyy']
+    for url in urls:
+        print(url)
+        if url.find('javbus')<0:
+            print(get_jav(url,True))
+        else:
+            print(get_javbus(url,True))
+
 
 if __name__ == "__main__":
-    mypath = r"D:\Games\project\hentai\ED"
-    print_tag_by_dir(mypath)
+    mypath = r"D:\Games\project\hentai\Shemale"
+    # print_tag_by_dir(mypath)
+
+    print_tag_by_url()
+
     # mypath = r"D:\Games\project"
     # reset_image(mypath)
+
     # print(_is_finded('xrw','565',r'D:\Games\project\hentai\其他'))

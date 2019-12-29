@@ -13,8 +13,9 @@ jav_host = 'www.r40z.com'
 #http://www.javlibrary.com/cn/vl_searchbyid.php?keyword=ABP-933
 #302跳转到真实结果
 @retry(stop_max_attempt_number=3,wait_random_min=1000, wait_random_max=3000)
-def get_jav(bango):
+def get_jav(bango,byurl = False):
     url = "http://"+jav_host+"/cn/vl_searchbyid.php?keyword="+bango
+    if byurl: url = bango
     req = request.Request(url)
     req.add_header('accept-language','zh-CN,zh;q=0.9')
     req.add_header('cache-control','no-cache')
@@ -55,8 +56,9 @@ def _parse_jav_content(content):
 
 #https://www.javbus.com/011619_013
 @retry(stop_max_attempt_number=3,wait_random_min=1000, wait_random_max=3000)
-def get_javbus(bango):
+def get_javbus(bango,byurl = False):
     url = "https://www.javbus.com/"+bango
+    if byurl: url = bango
     req = request.Request(url)
     req.add_header('accept-language','zh-CN,zh;q=0.9')
     req.add_header('cache-control','no-cache')
