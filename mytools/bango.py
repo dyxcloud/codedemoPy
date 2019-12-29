@@ -16,7 +16,7 @@ def get_bango(filename):
         match_bango = re.search(reg, filename)
         if match_bango:
             return match_bango.group()
-    return "error when find = "+filename
+    return None
 
 def list_file_name(filepath):
     '''获取目录下所有全路径文件名'''
@@ -45,4 +45,8 @@ def _not_skip_flie(filename):
 if __name__ == "__main__":
     mypath = r"D:\Games\project"
     for s in list_file_name(mypath):
-        print(get_bango(os.path.basename(s)))
+        bango = get_bango(os.path.basename(s))
+        if bango:
+            pass
+        else:
+            print("error get bango: " +s)
