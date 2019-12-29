@@ -34,6 +34,11 @@ def _is_video(filename):
     ex = filename[filename.rindex('.')+1:]
     return ex.lower() in lvideo
 
+limg = {'jpg','jpeg','png','webp','bmp'}
+def _is_img(filename):
+    ex = filename[filename.rindex('.')+1:]
+    return ex.lower() in limg
+
 lblack = {'scu','kizunanosora','S-Cute','ps7','Siberian Mouse','shemaleJP','foreign','短片'
 ,'19id'}
 def _not_skip_flie(filename):
@@ -42,10 +47,7 @@ def _not_skip_flie(filename):
             return False
     return True
 
-#TODO 获取 视频和对应封面 列出没有被匹配的图片
-
-if __name__ == "__main__":
-    mypath = r"D:\Games\project\hentai\COSAV\新建文件夹"
+def print_tag_by_dir(mypath):
     for s in list_file_name(mypath):
         bango = get_bango(os.path.basename(s))
         if bango:
@@ -54,3 +56,33 @@ if __name__ == "__main__":
             # print(get_javbus(bango))
         else:
             print("error get bango: " +s)
+
+
+re_img = re.compile(r"\d+")
+def reset_image(mypath):
+    '''TODO 获取 视频和对应封面 列出没有被匹配的图片'''
+    for root, dirs, files in os.walk(mypath):
+        for file in files:
+            if not _is_img(file):
+                continue
+            match = re.search(re_img,file)
+            if match:
+                if not _is_finded(match.group(),root):
+                    print("not video: "+file)
+            else:
+                print("not key "+file)
+
+def _is_finded(num,path):
+    # print("start find num={}".format(num))
+    for file in os.listdir(path):
+        if os.path.isfile(os.path.join(path,file)) and _is_video(file) and file.find(num)>=0:
+            return True
+    return False
+
+
+if __name__ == "__main__":
+    mypath = r"D:\Games\project\hentai\COSAV\新建文件夹"
+    print_tag_by_dir(mypath)
+    # mypath = r"D:\Games\project"
+    # reset_image(mypath)
+    # print(_is_finded('xrw','565',r'D:\Games\project\hentai\其他'))
