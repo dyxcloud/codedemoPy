@@ -9,16 +9,18 @@ httpproxy_handler = request.ProxyHandler({'http':'127.0.0.1:25378','https':'127.
 opener = request.build_opener(httpproxy_handler)
 request.install_opener(opener)
 
+jav_host = 'www.r40z.com'
 #http://www.javlibrary.com/cn/vl_searchbyid.php?keyword=ABP-933
 #302跳转到真实结果
 @retry(stop_max_attempt_number=3,wait_random_min=1000, wait_random_max=3000)
 def get_jav(bango):
-    url = "http://www.javlibrary.com/cn/vl_searchbyid.php?keyword="+bango
+    url = "http://"+jav_host+"/cn/vl_searchbyid.php?keyword="+bango
     req = request.Request(url)
     req.add_header('accept-language','zh-CN,zh;q=0.9')
     req.add_header('cache-control','no-cache')
     req.add_header('pragma','no-cache')
-    req.add_header('referer','http://www.javlibrary.com/cn/')
+    req.add_header('referer','http://'+jav_host+'/cn/')
+    req.add_header('Host',jav_host)
     req.add_header("User-Agent","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36")
     with request.urlopen(req,timeout=10) as f:
         if f.status == 200:

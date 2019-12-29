@@ -21,7 +21,7 @@ def get_bango(filename):
 
 def list_file_name(filepath):
     '''获取目录下所有全路径文件名'''
-    result = ['kizunanosora']
+    result = []
     for root, dirs, files in os.walk(filepath):
         for file in files:
             r = os.path.join(root, file)
@@ -34,7 +34,8 @@ def _is_video(filename):
     ex = filename[filename.rindex('.')+1:]
     return ex.lower() in lvideo
 
-lblack = {'scu','kizunanosora','S-Cute','ps7','Siberian Mouse','shemaleJP','foreign','短片'}
+lblack = {'scu','kizunanosora','S-Cute','ps7','Siberian Mouse','shemaleJP','foreign','短片'
+,'19id'}
 def _not_skip_flie(filename):
     for b in lblack:
         if filename.find(b)>=0:
@@ -44,7 +45,7 @@ def _not_skip_flie(filename):
 #TODO 获取 视频和对应封面 列出没有被匹配的图片
 
 if __name__ == "__main__":
-    mypath = r"D:\Games\project"
+    mypath = r"D:\Games\project\hentai\COSAV\新建文件夹"
     for s in list_file_name(mypath):
         bango = get_bango(os.path.basename(s))
         if bango:
