@@ -81,7 +81,7 @@ def _is_finded(num,path):
 
 
 if __name__ == "__main__":
-    mypath = r"D:\Games\project\hentai\COSAV\新建文件夹"
+    mypath = r"D:\Games\project\hentai\ED"
     print_tag_by_dir(mypath)
     # mypath = r"D:\Games\project"
     # reset_image(mypath)

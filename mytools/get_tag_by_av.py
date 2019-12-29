@@ -25,7 +25,10 @@ def get_jav(bango):
     with request.urlopen(req,timeout=10) as f:
         if f.status == 200:
             data = f.read()
-            return _parse_jav_content(data.decode('utf-8'))
+            try:
+                return _parse_jav_content(data.decode('utf-8'))
+            except:
+                print("parse jav error bango="+bango)
     return None
 
 re_jav_tag = re.compile(r'(rel="category tag">)(.+?)(</a></span>)')
@@ -63,7 +66,10 @@ def get_javbus(bango):
     with request.urlopen(req,timeout=10) as f:
         if f.status == 200:
             data = f.read()
-            return _parse_javbus_content(data.decode('utf-8'))
+            try:
+                return _parse_javbus_content(data.decode('utf-8'))
+            except:
+                print("parse javbus error bango="+bango)
     return None
 
 re_javbus_tag = re.compile(r'(name="keywords" content=")(.+)(">)')
