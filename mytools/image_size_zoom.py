@@ -49,7 +49,7 @@ def dotask(path):
 
 
 if __name__ == "__main__":
-    dotask(r'D:\Download\p\图片任务组_20191219_22271')
-    # _waifu2x(r'D:\Download\test\43287671_p0.jpg',3.0)
+    # dotask(r'D:\Download\p\图片任务组_20191219_2227')
+    _waifu2x(r'D:\Download\61215438_p0.png',2.0)
     
     print("done~")

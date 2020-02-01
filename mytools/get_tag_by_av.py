@@ -9,7 +9,7 @@ httpproxy_handler = request.ProxyHandler({'http':'127.0.0.1:25378','https':'127.
 opener = request.build_opener(httpproxy_handler)
 request.install_opener(opener)
 
-jav_host = 'www.r40z.com'
+jav_host = 'www.p42u.com'
 #http://www.javlibrary.com/cn/vl_searchbyid.php?keyword=ABP-933
 #302跳转到真实结果
 @retry(stop_max_attempt_number=3,wait_random_min=1000, wait_random_max=3000)
@@ -52,7 +52,7 @@ def _parse_jav_content(content):
         for m in tags_match:
             result.append(m.group(2))
 
-    return ",".join(result)
+    return "#".join(result)
 
 #https://www.javbus.com/011619_013
 @retry(stop_max_attempt_number=3,wait_random_min=1000, wait_random_max=3000)
@@ -94,14 +94,14 @@ def _parse_javbus_content(content):
         line = tags_match.group(2)
         line = _t2s(line[line.index(',')+1:])#去掉番号
         result.append(line)
-    return ",".join(result)
+    return "#".join(result)
 
 cc = OpenCC('t2s')
 def _t2s(str):
     return cc.convert(str)
 
 if __name__ == "__main__":
-    target = ['SDMM-046']
+    target = ['DAPD-003']
     for t in target:
         print(t)
         print(get_jav(t))
