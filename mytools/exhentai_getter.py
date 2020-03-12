@@ -51,6 +51,7 @@ class nhentaigetter:
         '''
         url = url.replace('https://t.nhentai.net','https://i.nhentai.net',1)
         url = url.replace('t.jpg','.jpg',1)
+        url = url.replace('t.png','.png',1)
         return url
 
     def getAllImg(self,url):
@@ -68,11 +69,11 @@ class nhentaigetter:
 #TODO 漫画预览页超过一页 添加翻页功能
 
 if __name__ == "__main__":
-    # cookie = 'sl=dm_1; ipb_member_id=4483572; ipb_pass_hash=b1d7d5acd649a01a1643124c8a0918a8; igneous=df9724040; sk=; yay=0; panda_width=1500'
-    # getter = exhentaigetter(cookie)
-    # url = 'https://exhentai.org/g/1362635/816a598ece/'
-    # getter.print_result(url)
+    cookie = 'sl=dm_1; ipb_member_id=4483572; ipb_pass_hash=b1d7d5acd649a01a1643124c8a0918a8; igneous=df9724040; sk=; yay=0; panda_width=1500'
+    getter = exhentaigetter(cookie)
+    url = 'https://exhentai.org/g/513869/8284e10c32/?p=4'
+    getter.print_result(url)
 
-    ngetter = nhentaigetter('')
-    url = 'https://nhentai.net/g/221928/'
-    ngetter.print_result(url)
+    # ngetter = nhentaigetter('')
+    # url = 'https://nhentai.net/g/133593/'
+    # ngetter.print_result(url)
