@@ -1,6 +1,7 @@
 import pyperclip
 import requests_html
 
+'''不再使用, 转js实现'''
 
 def copystr(str):
     pyperclip.copy(str)
@@ -78,14 +79,12 @@ class nhentaigetter:
 
 
 
-#TODO 漫画预览页超过一页 添加翻页功能
-
 if __name__ == "__main__":
-    # cookie = 'sl=dm_1; ipb_member_id=4483572; ipb_pass_hash=b1d7d5acd649a01a1643124c8a0918a8; igneous=df9724040; sk=; yay=0; panda_width=1500'
-    # getter = exhentaigetter(cookie)
-    # url = 'https://exhentai.org/g/1473317/9bbf421d1a/'
-    # getter.print_result(url)
+    cookie = 'sl=dm_1; ipb_member_id=4483572; ipb_pass_hash=b1d7d5acd649a01a1643124c8a0918a8; igneous=df9724040; sk=; yay=0; panda_width=1500'
+    getter = exhentaigetter(cookie)
+    url = 'https://exhentai.org/g/1473317/9bbf421d1a/'
+    getter.print_result(url)
 
-    ngetter = nhentaigetter('')
-    url = 'https://nhentai.net/g/280275/'
-    ngetter.print_result(url)
+    # ngetter = nhentaigetter('')
+    # url = 'https://nhentai.net/g/228141/'
+    # ngetter.print_result(url)
