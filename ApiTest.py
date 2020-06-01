@@ -1,8 +1,13 @@
-lblack = {'scu','kizunanosora','S-Cute','ps7','Siberian Mouse','shemaleJP','foreign','短片'}
-def _not_skip_flie(filename):
-    for b in lblack:
-        if filename.find(b)>=0:
-            return False
-    return True
+from PIL import Image
+from PIL import ImageFilter
 
-print(_not_skip_flie('asdas短片123as'))
+img = Image.open(r'D:\file\pic\TIM截图20200219150107.png')
+threshold = 50
+table = []
+for i in range(256):
+    if i < threshold:
+        table.append(0)
+    else:
+        table.append(1)
+img = img.convert("L").point(table, '1')
+img.show()
