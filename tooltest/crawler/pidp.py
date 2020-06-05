@@ -1,5 +1,8 @@
 from selenium import webdriver
 import time
+import datetime
+
+
 
 class pidp():
     def __init__(self):
@@ -8,17 +11,17 @@ class pidp():
 
     def login(self,username, password):
         self.driver.get('http://www.iprdp.cn/login.html')
-        time.sleep(1)
+        #time.sleep(1)
         self.driver.find_element_by_css_selector('body > div.main > div > div > div.login-panel.fr.bgf > div.login-way-content.now > div.login-panel-item.account-panel > div:nth-child(1) > label > input[type=text]').click()
         self.driver.find_element_by_css_selector('body > div.main > div > div > div.login-panel.fr.bgf > div.login-way-content.now > div.login-panel-item.account-panel > div:nth-child(1) > label > input[type=text]').clear()
         self.driver.find_element_by_css_selector('body > div.main > div > div > div.login-panel.fr.bgf > div.login-way-content.now > div.login-panel-item.account-panel > div:nth-child(1) > label > input[type=text]').send_keys(username)
-        time.sleep(1)
+        #time.sleep(1)
         self.driver.find_element_by_css_selector('body > div.main > div > div > div.login-panel.fr.bgf > div.login-way-content.now > div.login-panel-item.account-panel > div:nth-child(2) > label > input[type=password]').click()
         self.driver.find_element_by_css_selector('body > div.main > div > div > div.login-panel.fr.bgf > div.login-way-content.now > div.login-panel-item.account-panel > div:nth-child(2) > label > input[type=password]').clear()
         self.driver.find_element_by_css_selector('body > div.main > div > div > div.login-panel.fr.bgf > div.login-way-content.now > div.login-panel-item.account-panel > div:nth-child(2) > label > input[type=password]').send_keys(password)
-        time.sleep(1)
+        #time.sleep(1)
         self.driver.find_element_by_id('submit-btn').click()
-        time.sleep(3)
+        #time.sleep(3)
 
     def startTask(self):
         self.driver.find_element_by_css_selector('body > div > div.layui-side.kit-side.pub-l-side > div > ul > li:nth-child(2) > a > span:nth-child(2)').click()
@@ -51,14 +54,20 @@ class pidp():
 
 def program():
     p = pidp()
-    users = ['apptest'+str(x) for x in range(894,1000)]
+    users = ['apptest'+str(x) for x in range(334,667)]
+    print('start>>>' + str(datetime.datetime.now()))
+    start_t  = datetime.datetime.now()
     for user in users:
-        print(user)
+        print(user+'   '+str(datetime.datetime.now()))
         p.login(user,'cnpat6')
-        p.startTask()
-        p.logout()
+        time.sleep(4)
+        # p.startTask()
+        # p.logout()
+    end_t = datetime.datetime.now()
+    print ((end_t - start_t).seconds)
+    print('end>>>' + str(datetime.datetime.now()))
     p.quit()
-
 
 if __name__ == "__main__":
     program()
+    
