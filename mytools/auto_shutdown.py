@@ -6,15 +6,17 @@ import winsound
 
 class speed_checker:
 
-    sep = 3  # 每秒间隔
-    net_card = '以太网'  # 网卡名称
-    target = 100.00  # 网速阈值
-    deque = deque(maxlen=int(1*(60/sep)))  # 速度缓存
+    sep = None  # 每秒间隔
+    net_card = None  # 网卡名称
+    target = None  # 网速阈值
+    deque = None  # 速度缓存
 
-    def __init__(self, sep=3, net_card='以太网', target=100.00):
+    def __init__(self, sep=3, net_card='以太网', target=100.00, time = 5):
         self.sep = sep
         self.net_card = net_card
         self.target = target
+        qlen = int( time * ( 60 / sep ))
+        self.deque = deque(maxlen=qlen)
 
     def _get_speed(self):
         s1 = psutil.net_io_counters(pernic=True)[self.net_card]
@@ -39,22 +41,21 @@ class speed_checker:
         while True:
             time.sleep(self.sep-1)
             s = self._get_speed()
+            #出现大于阈值的就清空队列
+            if s > self.target and len(self.deque) > 0:
+                self.deque.clear()
+                continue
             self.deque.append(s)
-            if s < self.target and len(self.deque) == self.deque.maxlen:
-                need_shutdown = True
-                for x in self.deque:
-                    if x > self.target:
-                        need_shutdown = False
-                        break
-                if need_shutdown:
-                    is_go_on = self._do_shutdown()
-                    if is_go_on:
-                        self.deque.clear
-                    else:
-                        break
+            #队列满了, 触发关机
+            if len(self.deque) == self.deque.maxlen:
+                is_go_on = self._do_shutdown()
+                if is_go_on:
+                    self.deque.clear()
+                else:
+                    break
 
 
 if __name__ == "__main__":
-    checker = speed_checker()
+    checker = speed_checker(sep=3, target=100.00, time = 5)
     checker.run_check()
     print('done~')
