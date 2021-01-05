@@ -1,3 +1,6 @@
-*.pyc
+#IDE
+.idea/
 .vscode
-.gitignore
+
+__pycache__/
+*.pyc
