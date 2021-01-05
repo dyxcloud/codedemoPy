@@ -2,9 +2,8 @@
 
 
 import re
-import glob
 import os
-from mytools.get_tag_by_av import get_jav,get_javbus
+from src.mytools.get_tag_by_av import get_jav,get_javbus
 
 
 lreg = [re.compile(r"^[a-zA-Z]+\d*[-_][a-zA-Z]*\d{2,} ")

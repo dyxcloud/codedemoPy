@@ -4,7 +4,7 @@ import winsound
 from subprocess import run
 
 from PIL import Image
-from mytools.bango import _is_img
+from src.mytools.bango import _is_img
 
 
 
