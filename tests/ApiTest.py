@@ -1,13 +1,13 @@
-from PIL import Image
-from PIL import ImageFilter
+import tkinter.messagebox
 
-img = Image.open(r'D:\file\pic\TIM截图20200219150107.png')
-threshold = 50
-table = []
-for i in range(256):
-    if i < threshold:
-        table.append(0)
-    else:
-        table.append(1)
-img = img.convert("L").point(table, '1')
-img.show()
+title = '提示'
+msg = '要执行此操作吗'
+
+root = tkinter.Tk()
+root.title('GUI')  # 标题
+root.geometry('8x6')  # 窗体大小
+root.resizable(False, False)  # 固定窗体
+root.after(2000, root.destroy)
+
+a = tkinter.messagebox.askyesno(title, msg)
+print(a)

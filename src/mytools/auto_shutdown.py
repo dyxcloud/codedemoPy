@@ -1,5 +1,6 @@
 import psutil
 import time
+import tkinter
 from collections import deque
 import winsound
 
@@ -43,6 +44,18 @@ class SpeedChecker:
         is_go_on = False
         return is_go_on
 
+    @staticmethod
+    def _show_message():
+        """
+        弹出关机提示框
+        :return: 是否要关机
+        """
+        top = tkinter.Toplevel()
+        top.title('检测到持续低网速')
+        tkinter.Message(top, text="是否要关机?", padx=200, pady=200).pack()
+        top.after(20000, top.destroy)
+        return None
+
     def run_check(self):
         """执行监控"""
         while True:
@@ -64,5 +77,8 @@ class SpeedChecker:
 
 if __name__ == "__main__":
     checker = SpeedChecker(sep=3, target=100.00, time_min=5)
-    checker.run_check()
+    # checker.run_check()
+    root = tkinter.Tk()
+    tkinter.Button(root, text="Click to register", command=checker._show_message).pack()
+    root.mainloop()
     print('done~')
