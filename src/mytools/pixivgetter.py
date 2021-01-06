@@ -6,103 +6,118 @@ import json
 import sys
 
 
-def getFileNameList(path):
+def get_file_name_list(path):
     return os.listdir(path)
 
 
 re_pid = re.compile(r'\d{8,}')
 re_pno = re.compile(r'(?<=[pP])\d{1,2}')
-def getPID(filename):
-    '''解析文件名,获取pid'''
-    pid,pno=None,None
-    mpid = re.search(re_pid,filename)
-    if mpid:
-        pid = mpid.group()
-    mpno = re.search(re_pno,filename)
-    if mpno:
-        pno = int(mpno.group())
-    return pid,pno
-
-def _test_getPID():
-    print(getPID("61791949_p0.webp"))
-    print(getPID("62025919_シロクマA＠2日目Q-04b]週刊熊の穴#33 2B メインテナンス中P0_00000.webp"))
-    print(getPID("62029906_はれんちとめこ]ﾂｲｯﾀｰ落書きまとめP1_00000.webp"))
-    print(getPID("66078530_p2.webp"))
-    print(getPID("66078531.webp"))
 
 
-#https://www.pixiv.net/ajax/illust/61791949/pages
-httpproxy_handler = request.ProxyHandler({'https':'127.0.0.1:25378'})
-opener = request.build_opener(httpproxy_handler)
+def get_pid(filename):
+    """解析文件名,获取pid"""
+    pid, pno = None, None
+    m_pid = re.search(re_pid, filename)
+    if m_pid:
+        pid = m_pid.group()
+    m_pno = re.search(re_pno, filename)
+    if m_pno:
+        pno = int(m_pno.group())
+    return pid, pno
+
+
+def _test_get_pid():
+    print(get_pid("61791949_p0.webp"))
+    print(get_pid("62025919_シロクマA＠2日目Q-04b]週刊熊の穴#33 2B メインテナンス中P0_00000.webp"))
+    print(get_pid("62029906_はれんちとめこ]ﾂｲｯﾀｰ落書きまとめP1_00000.webp"))
+    print(get_pid("66078530_p2.webp"))
+    print(get_pid("66078531.webp"))
+
+
+# https://www.pixiv.net/ajax/illust/61791949/pages
+http_proxy_handler = request.ProxyHandler({'https': '127.0.0.1:25378'})
+opener = request.build_opener(http_proxy_handler)
 request.install_opener(opener)
-@retry(stop_max_attempt_number=3,wait_random_min=1000, wait_random_max=3000)
-def _getJson(pid):
-    '''请求p站图片信息接口, 返回json'''
-    url = "https://www.pixiv.net/ajax/illust/"+pid+"/pages"
+
+
+@retry(stop_max_attempt_number=3, wait_random_min=1000, wait_random_max=3000)
+def _get_json(pid):
+    """请求p站图片信息接口, 返回json"""
+    url = "https://www.pixiv.net/ajax/illust/" + pid + "/pages"
     req = request.Request(url)
-    req.add_header('accept-language','zh-CN,zh;q=0.9')
-    req.add_header('cache-control','no-cache')
-    req.add_header('pragma','no-cache')
-    req.add_header('referer','https://www.pixiv.net/')
-    req.add_header('cookie',cookie)
-    req.add_header("User-Agent","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36")
-    with request.urlopen(req,timeout=10) as f:
+    req.add_header('accept-language', 'zh-CN,zh;q=0.9')
+    req.add_header('cache-control', 'no-cache')
+    req.add_header('pragma', 'no-cache')
+    req.add_header('referer', 'https://www.pixiv.net/')
+    req.add_header('cookie', cookie)
+    req.add_header("User-Agent",
+                   "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36")
+    with request.urlopen(req, timeout=10) as f:
         if f.status == 200:
             data = f.read()
-            return data.decode('utf-8') 
+            return data.decode('utf-8')
     return None
 
-def getImgList(pid,pno):
-    '''返回pid所有图片列表,或者指定的no链接'''
+
+def get_img_list(pid, pno):
+    """返回pid所有图片列表,或者指定的no链接"""
     data = None
     try:
-        data = _getJson(pid)
-    except:
+        data = _get_json(pid)
+    except Exception:
         print("Unexpected error:", sys.exc_info()[:2])
     if data is not None:
-        jdata = json.loads(data)
-        if jdata['error'] is not 'true':
-            body = jdata['body']
+        j_data = json.loads(data)
+        if j_data['error'] is not 'true':
+            body = j_data['body']
             if len(body) is not 0:
                 if pno is not None:
-                    if pno<len(body): return [body[pno]['urls']['original']]
+                    if pno < len(body):
+                        return [body[pno]['urls']['original']]
                 else:
                     return [x['urls']['original'] for x in body]
     return None
 
-def cleanText(filepath):
-    if os.path.exists(filepath): os.remove(filepath)
 
-def saveText(filepath,data):
-    iserror = filepath == errorfile
-    with open(filepath,'at') as f:
+def clean_text(filepath):
+    if os.path.exists(filepath):
+        os.remove(filepath)
+
+
+def save_text(filepath, data):
+    is_error = filepath == errorfile
+    with open(filepath, 'at') as f:
         f.write(data)
-        if iserror: f.write(' |')
+        if is_error:
+            f.write(' |')
         f.write('\n')
 
+
 def program():
-    '''扫描本地指定目录, 获取图片pid的原始url'''
-    count_all,count_good,count_bad = 0,0,0
-    cleanText(resultfile)
-    cleanText(errorfile)
-    namelist = getFileNameList(target)
+    """扫描本地指定目录, 获取图片pid的原始url"""
+    count_all, count_good, count_bad = 0, 0, 0
+    clean_text(resultfile)
+    clean_text(errorfile)
+    namelist = get_file_name_list(target)
     count_all = len(namelist)
     print("find {} images".format(count_all))
-    for index,filename in enumerate(namelist):
-        isGood = False
-        pid,pno = getPID(filename)
-        print(">>{}/{}\tpid:{}\tpno:{}".format(index+1,count_all,pid,pno))
+    for index, filename in enumerate(namelist):
+        is_good = False
+        pid, pno = get_pid(filename)
+        print(">>{}/{}\tpid:{}\tpno:{}".format(index + 1, count_all, pid, pno))
         if pid is not None:
-            result = getImgList(pid,pno)
+            result = get_img_list(pid, pno)
             if result is not None and len(result) is not 0:
                 for r in result:
-                    saveText(resultfile,r)
-                    if not isGood: count_good+=1
-                    isGood = True
-        if not isGood:
-            saveText(errorfile,filename)
-            count_bad+=1
-    print("done!\nfind {} images\ngoodFile:{}\nbadfile:{}".format(count_all,count_good,count_bad))
+                    save_text(resultfile, r)
+                    if not is_good:
+                        count_good += 1
+                    is_good = True
+        if not is_good:
+            save_text(errorfile, filename)
+            count_bad += 1
+    print("done!\nfind {} images\ngoodFile:{}\nbadfile:{}".format(count_all, count_good, count_bad))
+
 
 target = "D:/file/Picture/ACG/P站/"
 resultfile = "D:/Download/presult.txt"
@@ -111,7 +126,7 @@ cookie = 'p_ab_id=7; p_ab_id_2=3; a_type=0; b_type=1; login_ever=yes; privacy_po
 
 if __name__ == "__main__":
     # _test_getPID()
-    print(getImgList("80316543",None))
+    print(get_img_list("80316543", None))
     # list(map(print,getFileNameList(target)))
     # program()
     print("done")

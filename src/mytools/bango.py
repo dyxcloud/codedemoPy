@@ -65,9 +65,9 @@ def _not_skip_file(filename):
 re_img = re.compile(r"\d+")
 
 
-def reset_image(mypath):
+def reset_image(my_path):
     """TODO 获取 视频和对应封面 列出没有被匹配的图片"""
-    for root, dirs, files in os.walk(mypath):
+    for root, dirs, files in os.walk(my_path):
         for file in files:
             if not _is_img(file):
                 continue
@@ -114,12 +114,12 @@ def print_tag_by_url():
 
 
 if __name__ == "__main__":
-    my_path = r"D:\Games\project\hentai\Shemale"
-    # print_tag_by_dir(my_path)
+    my_p = r"D:\Games\project\hentai\Shemale"
+    # print_tag_by_dir(my_p)
 
     print_tag_by_url()
 
     # mypath = r"D:\Games\project"
-    # reset_image(mypath)
+    # reset_image(my_p)
 
     # print(_is_finded('xrw','565',r'D:\Games\project\hentai\其他'))
