@@ -1,6 +1,6 @@
 import psutil
 import time
-import tkinter
+import tkinter.messagebox
 from collections import deque
 import winsound
 
@@ -48,13 +48,16 @@ class SpeedChecker:
     def _show_message():
         """
         弹出关机提示框
-        :return: 是否要关机
+        :return: True不关机 False执行关机
         """
-        top = tkinter.Toplevel()
-        top.title('检测到持续低网速')
-        tkinter.Message(top, text="是否要关机?", padx=200, pady=200).pack()
-        top.after(20000, top.destroy)
-        return None
+        root = tkinter.Tk()
+        root.title('GUI')  # 标题
+        root.geometry('8x6')  # 窗体大小
+        root.resizable(False, False)  # 固定窗体
+        wait_time_sec = 20
+        root.after(wait_time_sec * 1000, root.destroy)
+        result = tkinter.messagebox.askretrycancel("提示", "检测到持续低网速,{}秒后将自动关机,点击重试取消关机".format(wait_time_sec))
+        return result
 
     def run_check(self):
         """执行监控"""
@@ -78,7 +81,4 @@ class SpeedChecker:
 if __name__ == "__main__":
     checker = SpeedChecker(sep=3, target=100.00, time_min=5)
     # checker.run_check()
-    root = tkinter.Tk()
-    tkinter.Button(root, text="Click to register", command=checker._show_message).pack()
-    root.mainloop()
     print('done~')
