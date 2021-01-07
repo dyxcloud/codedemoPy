@@ -3,11 +3,14 @@ import time
 import tkinter.messagebox
 from collections import deque
 import winsound
+import sys
+import os
 
-messbody = '''检测到持续低网速,{}秒后将自动关机!
+mess_body = '''检测到持续低网速,{}秒后将自动关机!
 是否要取消本次关机?
 点击\"是\"继续监测, 点击\"否\"立即关机, 点击\"取消\"结束程序
 '''
+
 
 def _show_message():
     """
@@ -23,22 +26,24 @@ def _show_message():
     # 提示音
     winsound.PlaySound("SystemHand", winsound.SND_ALIAS)
     # 弹窗
-    # 是:Ture 否:False 取消:None 超时:False
-    result = tkinter.messagebox.askyesnocancel("提示", messbody.format(wait_time_sec))
+    # 是:True 否:False 取消:None 超时:False
+    result = tkinter.messagebox.askyesnocancel("提示", mess_body.format(wait_time_sec))
     return result
 
 
 def _do_shutdown():
-    """TODO 弹出确认对话框, 并倒计时进行关机"""
-    print('要关机啦')
+    """弹出确认对话框, 并倒计时进行关机"""
     goon = _show_message()
     if goon is None:
         print("终止程序")
+        sys.exit(0)
     elif goon:
         print("不关机")
+        return goon
     else:
         print("执行关机")
-    return is_go_on
+        os.system('shutdown /s /t 5')
+    return goon
 
 
 class SpeedChecker:
@@ -91,11 +96,6 @@ class SpeedChecker:
 
 
 if __name__ == "__main__":
-    # checker = SpeedChecker(sep=3, target=100.00, time_min=5)
-    # checker.run_check()
-    res = _show_message()
-    if res:
-        print("不关机")
-    else:
-        print("关机")
+    checker = SpeedChecker(sep=3, target=100.00, time_min=5)
+    checker.run_check()
     print('done~')
