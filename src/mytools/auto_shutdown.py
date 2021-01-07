@@ -4,6 +4,42 @@ import tkinter.messagebox
 from collections import deque
 import winsound
 
+messbody = '''检测到持续低网速,{}秒后将自动关机!
+是否要取消本次关机?
+点击\"是\"继续监测, 点击\"否\"立即关机, 点击\"取消\"结束程序
+'''
+
+def _show_message():
+    """
+    弹出关机提示框
+    :return: True不关机 False执行关机
+    """
+    root = tkinter.Tk()
+    root.title('GUI')  # 标题
+    root.geometry('8x6')  # 窗体大小
+    root.resizable(False, False)  # 固定窗体
+    wait_time_sec = 20
+    root.after(wait_time_sec * 1000, root.destroy)
+    # 提示音
+    winsound.PlaySound("SystemHand", winsound.SND_ALIAS)
+    # 弹窗
+    # 是:Ture 否:False 取消:None 超时:False
+    result = tkinter.messagebox.askyesnocancel("提示", messbody.format(wait_time_sec))
+    return result
+
+
+def _do_shutdown():
+    """TODO 弹出确认对话框, 并倒计时进行关机"""
+    print('要关机啦')
+    goon = _show_message()
+    if goon is None:
+        print("终止程序")
+    elif goon:
+        print("不关机")
+    else:
+        print("执行关机")
+    return is_go_on
+
 
 class SpeedChecker:
     sep = None  # 每秒间隔
@@ -35,30 +71,6 @@ class SpeedChecker:
         print("{:.2f}".format(result) + 'kB/s')
         return result
 
-    @staticmethod
-    def _do_shutdown():
-        """弹出确认对话框, 并倒计时进行关机"""
-        winsound.PlaySound('SystemExit', winsound.SND_ALIAS)
-
-        print('关机啦')
-        is_go_on = False
-        return is_go_on
-
-    @staticmethod
-    def _show_message():
-        """
-        弹出关机提示框
-        :return: True不关机 False执行关机
-        """
-        root = tkinter.Tk()
-        root.title('GUI')  # 标题
-        root.geometry('8x6')  # 窗体大小
-        root.resizable(False, False)  # 固定窗体
-        wait_time_sec = 20
-        root.after(wait_time_sec * 1000, root.destroy)
-        result = tkinter.messagebox.askretrycancel("提示", "检测到持续低网速,{}秒后将自动关机,点击重试取消关机".format(wait_time_sec))
-        return result
-
     def run_check(self):
         """执行监控"""
         while True:
@@ -71,7 +83,7 @@ class SpeedChecker:
             self.deque.append(s)
             # 队列满了, 触发关机
             if len(self.deque) == self.deque.maxlen:
-                is_go_on = self._do_shutdown()
+                is_go_on = _do_shutdown()
                 if is_go_on:
                     self.deque.clear()
                 else:
@@ -79,6 +91,11 @@ class SpeedChecker:
 
 
 if __name__ == "__main__":
-    checker = SpeedChecker(sep=3, target=100.00, time_min=5)
+    # checker = SpeedChecker(sep=3, target=100.00, time_min=5)
     # checker.run_check()
+    res = _show_message()
+    if res:
+        print("不关机")
+    else:
+        print("关机")
     print('done~')
