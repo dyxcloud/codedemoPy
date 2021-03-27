@@ -16,3 +16,6 @@ create table bgm_subject
     "drop" integer default 0,
     create_date varchar
 );
+
+
+select subject_id from bgm_subject where subject_id=302189;
