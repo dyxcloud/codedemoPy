@@ -2,6 +2,7 @@ import requests_html
 import sqlite3
 import os
 import re
+from datetime import datetime
 
 
 class DbOperator:
@@ -28,11 +29,12 @@ class DbOperator:
     def insert(self, param_dic):
         s_id = int(param_dic['subject_id'])
         self.check(s_id)
-        sql = "insert into bgm_subject values (?,?,?,?,?,?,?,?,?,?,?,?)"
+        sql = "insert into bgm_subject values (?,?,?,?,?,?,?,?,?,?,?,?,?)"
+        date = str(datetime.now().replace(microsecond=0))
         values = [param_dic['subject_id'], param_dic['name'], param_dic['name_cn'], param_dic['point'],
                   param_dic['rank'], param_dic['votes'],
                   param_dic['date'], param_dic['wanted'], param_dic['watched'], param_dic['watching'],
-                  param_dic['hold'], param_dic['drop']]
+                  param_dic['hold'], param_dic['drop'], date]
         self.cursor.execute(sql, values)
 
     def close(self):
