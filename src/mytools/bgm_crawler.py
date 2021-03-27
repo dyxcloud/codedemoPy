@@ -1,10 +1,7 @@
 import requests_html
 import sqlite3
 import os
-
-dic = {'subject_id': '301469', 'name': '100万の命の上に俺は立っている', 'name_cn': '我立于百万生命之上', 'point': '5.8', 'rank': '5622',
-       'votes': '797', 'date': '2020年10月2日', 'wanted': '164', 'watched': '887', 'watching': '228', 'hold': '89',
-       'drop': '221'}
+import re
 
 
 class DbOperator:
@@ -15,10 +12,20 @@ class DbOperator:
     def __init__(self):
         super().__init__()
 
-    def count(self, subject_id):
-        sql = "select count(*) from bgm_subject where subject_id=?"
+    def check(self, subject_id):
+        """判断是否存在, 如果存在再判断是否检查过"""
+        sql = "select checked from bgm_subject where subject_id=?"
         self.cursor.execute(sql, (subject_id,))
-        return self.cursor.fetchone()[0]
+        if self.cursor.rowcount == 0:
+            print("___未找到数据")
+            return False
+        if self.cursor.fetchone()[0] == 0:
+            print("___未检查数据, 执行删除")
+            self.delete(subject_id)
+            return False
+        else:
+            print("___已检查数据")
+            return True
 
     def delete(self, subject_id):
         sql = "delete from bgm_subject where subject_id=?"
@@ -27,20 +34,33 @@ class DbOperator:
 
     def insert(self, param_dic):
         s_id = int(param_dic['subject_id'])
-        if self.count(s_id) > 0:
-            self.delete(s_id)
-        sql = "insert into bgm_subject values (?,?,?,?,?,?,?,?,?,?,?,?)"
-        values = [param_dic['subject_id'], param_dic['name'], param_dic['name_cn'], param_dic['point'], param_dic['rank'], param_dic['votes'],
-                  param_dic['date'], param_dic['wanted'], param_dic['watched'], param_dic['watching'], param_dic['hold'], param_dic['drop']]
-        self.cursor.execute(sql, values)
+        if not self.check(s_id):
+            sql = "insert into bgm_subject values (?,?,?,?,?,?,?,?,?,?,?,?,?)"
+            values = [param_dic['subject_id'], param_dic['name'], param_dic['name_cn'], param_dic['point'],
+                      param_dic['rank'], param_dic['votes'],
+                      param_dic['date'], param_dic['wanted'], param_dic['watched'], param_dic['watching'],
+                      param_dic['hold'], param_dic['drop'], 0]
+            self.cursor.execute(sql, values)
 
     def close(self):
         self.cursor.close()
         self.conn.close()
 
 
+# noinspection PyUnresolvedReferences
 class BgmCrawler:
     user_agent = requests_html.user_agent(style='chrome')
+    cookie = {"__cfduid":"da34ac776ceeac61f24289835be3d6ddf1616837801",
+              "chii_sid":"LkWJmq",
+              "chii_sec_id":"U1HHXb8%2FzmOGFnuN3jWQUxCIOEs8LWYAeMv3DeU",
+              "chii_theme":"light",
+              "__utma":"1.1005452815.1616837804.1616837804.1616837804.1",
+              "__utmb":"1.5.10.1616837804",
+              "__utmc":"1",
+              "__utmz":"1.1616837804.1.1.utmcsr=(direct)|utmccn=(direct)|utmcmd=(none)",
+              "__utmt":"1",
+              "chii_cookietime":"0",
+              "chii_auth":"BgKbXuoznWWTEymH1zWaJG%2F0TwlbISMnAcDFAf%2FDPQS%2BNXRUzdbxFrY6JnXhB39mSN1ItCXUyBbZJ6G4LtUMADuKhnaHI8z8NHIQ"}
     heads = {'User-Agent': user_agent}
     proxies = {}
     session = requests_html.HTMLSession()
@@ -48,7 +68,7 @@ class BgmCrawler:
     def __init__(self):
         super().__init__()
 
-    def _get_subject_list(self, target_url):
+    def get_subject_list(self, target_url):
         """获取待抓取url"""
         r = self.session.get(target_url, headers=self.heads, proxies=self.proxies)
         html = r.html
@@ -60,38 +80,72 @@ class BgmCrawler:
         last_page = html.find(".page_inner>:last-child")[0]
         if last_page.tag is 'a':
             print("下一页...")
-            sub_result = self._get_subject_list(target_url.split("?")[0] + last_page.links.pop())
+            sub_result = self.get_subject_list(target_url.split("?")[0] + last_page.links.pop())
             result += sub_result
         return result
 
-    def _get_detail(self, target_url):
+    def get_detail(self, target_url, need_cookie=False):
         """获取详情信息"""
-        r = self.session.get(target_url, headers=self.heads, proxies=self.proxies)
+        if need_cookie:
+            r = self.session.get(target_url, headers=self.heads, cookies=self.cookie, proxies=self.proxies)
+        else:
+            r = self.session.get(target_url, headers=self.heads, proxies=self.proxies)
         html = r.html
-        result = {}
+        # noinspection PyDictCreation
+        result = {
+            "subject_id": None, "name": None, "name_cn": None,
+            "point": None, "rank": None, "votes": None, "date": None,
+            "wanted": None, "watched": None, "watching": None, "hold": None, "drop": None
+        }
         result["subject_id"] = target_url.split("/")[-1]
+        # 判断是否需要登录抓取
+        if not need_cookie and len(html.find("h1.nameSingle>a")) == 0 and len(html.find("#colunmNotice")) > 0:
+            return self.get_detail(target_url, True)
         title = html.find("h1.nameSingle>a")[0]
         result["name"] = title.text
         result["name_cn"] = title.attrs["title"]
         result["point"] = html.find("div.global_score>span")[0].text
-        result["rank"] = html.find("div.global_score>div>small:last-child")[0].text[1:]
+        rank = html.find("div.global_score>div>small:last-child")[0].text[1:]
+        if rank != '-':
+            result["rank"] = rank
         result["votes"] = html.find("span[property='v:votes']")[0].text
-        result["date"] = html.find("ul#infobox>li")[2].text[6:]
-        result["wanted"] = html.find("div#subjectPanelCollect>span.tip_i>a")[0].text[0:-3]
-        result["watched"] = html.find("div#subjectPanelCollect>span.tip_i>a")[1].text[0:-3]
-        result["watching"] = html.find("div#subjectPanelCollect>span.tip_i>a")[2].text[0:-3]
-        result["hold"] = html.find("div#subjectPanelCollect>span.tip_i>a")[3].text[0:-3]
-        result["drop"] = html.find("div#subjectPanelCollect>span.tip_i>a")[4].text[0:-3]
+        match = re.search(r'(?<=^放送开始: ).+(?=$)', html.find("ul#infobox")[0].text)
+        if match:
+            result["date"] = match.group(0)
+        # 解析人数
+        line = html.find("div#subjectPanelCollect>span.tip_i")[0].text
+        match = re.search(r'(?<= )\d+(?=人想看)', line)
+        if match:
+            result["wanted"] = match.group(0)
+        match = re.search(r'(?<= )\d+(?=人看过)', line)
+        if match:
+            result["watched"] = match.group(0)
+        match = re.search(r'(?<= )\d+(?=人在看)', line)
+        if match:
+            result["watching"] = match.group(0)
+        match = re.search(r'(?<= )\d+(?=人搁置)', line)
+        if match:
+            result["hold"] = match.group(0)
+        match = re.search(r'(?<= )\d+(?=人抛弃)', line)
+        if match:
+            result["drop"] = match.group(0)
         return result
 
 
-def func():
-    crawler = BgmCrawler()
-    result = crawler._get_detail("https://bgm.tv/subject/301469")
-    print(result)
+def crawler_tag_list(list_page):
+    c = BgmCrawler()
+    db_operator = DbOperator()
+    url_list = c.get_subject_list(list_page)
+    print("获取到{}个url".format(len(url_list)))
+    for url in url_list:
+        print("开始解析:{}".format(url))
+        result = c.get_detail(url)
+        print("解析完成,{}".format(result))
+        db_operator.insert(result)
+    db_operator.close()
 
 
 if __name__ == '__main__':
-    db = DbOperator()
-    db.insert(dic)
-    db.close()
+    # crawler_tag_list("https://bgm.tv/anime/tag/2021%E5%B9%B44%E6%9C%88")
+    crawler = BgmCrawler()
+    print(crawler.get_detail("https://bgm.tv/subject/327986", True))
