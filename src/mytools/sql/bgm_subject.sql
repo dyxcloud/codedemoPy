@@ -19,3 +19,4 @@ create table bgm_subject
 
 
 select subject_id from bgm_subject where subject_id=302189;
+select * from bgm_subject where votes>200 order by point desc
