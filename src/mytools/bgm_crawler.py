@@ -94,7 +94,7 @@ class BgmCrawler:
         if rank != '-':
             result["rank"] = rank
         result["votes"] = html.find("span[property='v:votes']")[0].text
-        match = re.search(r'(?<=^放送开始: ).+(?=$)', html.find("ul#infobox")[0].text)
+        match = re.search(r'\d{4}年\d+月\d+日', html.find("ul#infobox")[0].text)
         if match:
             result["date"] = match.group(0)
         # 解析人数
@@ -131,9 +131,10 @@ def crawler_tag_list(list_page):
 
 
 if __name__ == '__main__':
-    crawler_tag_list("https://bgm.tv/anime/tag/2021%E5%B9%B44%E6%9C%88")
-    # crawler = BgmCrawler()
-    # result = crawler.get_detail("https://bgm.tv/subject/327986", True)
+    # crawler_tag_list("https://bgm.tv/anime/tag/2021%E5%B9%B44%E6%9C%88")
+    crawler = BgmCrawler()
+    result = crawler.get_detail("https://bgm.tv/subject/175600", False)
+    print(result)
     # db_operator = DbOperator()
     # db_operator.insert(result)
     # db_operator.close()
