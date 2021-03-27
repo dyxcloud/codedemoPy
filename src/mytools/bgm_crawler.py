@@ -15,9 +15,9 @@ class DbOperator:
 
     def check(self, subject_id):
         """判断是否存在, 如果存在再判断是否检查过"""
-        sql = "select subject_id from bgm_subject where subject_id=?"
+        sql = "select count(*) from bgm_subject where subject_id=?"
         self.cursor.execute(sql, (subject_id,))
-        if self.cursor.rowcount > 0:
+        if self.cursor.fetchone()[0] > 0:
             print("___找到旧数据, 执行删除")
             self.delete(subject_id)
 
@@ -45,7 +45,18 @@ class DbOperator:
 # noinspection PyUnresolvedReferences
 class BgmCrawler:
     user_agent = requests_html.user_agent(style='chrome')
-    cookie = {"chii_sid": "LkWJmq"}
+    cookie = {
+        # "__cfduid":"da34ac776ceeac61f24289835be3d6ddf1616837801",
+        "chii_sid": "NU1f4Q",
+        # "chii_sec_id":"U1HHXb8%2FzmOGFnuN3jWQUxCIOEs8LWYAeMv3DeU",
+        # "__utma":"1.1005452815.1616837804.1616837804.1616843638.2",
+        # "__utmz":"1.1616837804.1.1.utmcsr=(direct)|utmccn=(direct)|utmcmd=(none)",
+        # "chii_cookietime":"0",
+        # "__utmb":"1.3.10.1616843638",
+        # "__utmc":"1",
+        # " __utmt":"1",
+        # "chii_auth": "BgKbXuoznWWTEymH1zWaJG%2F0TwlbISMnAcDFAf%2FDPQS%2BNXRUzdbxFrY6JnXhB39mSN1ItCXUyBbZJ6G4LtUMADuKhnaHI8z8NHIQ"
+    }
     heads = {'User-Agent': user_agent}
     proxies = {}
     session = requests_html.HTMLSession()
@@ -72,7 +83,7 @@ class BgmCrawler:
     def get_detail(self, target_url, need_cookie=False):
         """获取详情信息"""
         if need_cookie:
-            r = self.session.get(target_url, headers=self.heads, cookies=self.cookie, proxies=self.proxies)
+            r = requests_html.HTMLSession().get(target_url, headers=self.heads, cookies=self.cookie, proxies=self.proxies)
         else:
             r = self.session.get(target_url, headers=self.heads, proxies=self.proxies)
         html = r.html
@@ -86,9 +97,12 @@ class BgmCrawler:
         # 判断是否需要登录抓取
         if not need_cookie and len(html.find("h1.nameSingle>a")) == 0 and len(html.find("#colunmNotice")) > 0:
             return self.get_detail(target_url, True)
-        title = html.find("h1.nameSingle>a")[0]
-        result["name"] = title.text
-        result["name_cn"] = title.attrs["title"]
+        title = html.find("h1.nameSingle>a")
+        if title is None or len(title) == 0:
+            print("{} 页面抓取失败!".format(target_url))
+            return None
+        result["name"] = title[0].text
+        result["name_cn"] = title[0].attrs["title"]
         result["point"] = html.find("div.global_score>span")[0].text
         rank = html.find("div.global_score>div>small:last-child")[0].text[1:]
         if rank != '-':
@@ -125,16 +139,22 @@ def crawler_tag_list(list_page):
     for url in url_list:
         print("开始解析:{}".format(url))
         result = c.get_detail(url)
-        print("解析完成,{}".format(result))
-        db_operator.insert(result)
+        if result is not None:
+            print("解析完成,{}".format(result))
+            db_operator.insert(result)
     db_operator.close()
+
+
+def crawler_one_page(url):
+    crawler = BgmCrawler()
+    result = crawler.get_detail(url)
+    if result is not None:
+        print(result)
+        db_operator = DbOperator()
+        db_operator.insert(result)
+        db_operator.close()
 
 
 if __name__ == '__main__':
     # crawler_tag_list("https://bgm.tv/anime/tag/2021%E5%B9%B44%E6%9C%88")
-    crawler = BgmCrawler()
-    result = crawler.get_detail("https://bgm.tv/subject/175600", False)
-    print(result)
-    # db_operator = DbOperator()
-    # db_operator.insert(result)
-    # db_operator.close()
+    crawler_one_page("https://bgm.tv/subject/327986")
