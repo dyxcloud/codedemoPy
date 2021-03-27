@@ -45,9 +45,10 @@ class DbOperator:
 # noinspection PyUnresolvedReferences
 class BgmCrawler:
     user_agent = requests_html.user_agent(style='chrome')
+    # 抓取一定数量后chii_sid需要更新
     cookie = {
         # "__cfduid":"da34ac776ceeac61f24289835be3d6ddf1616837801",
-        "chii_sid": "NU1f4Q",
+        "chii_sid": "EuoOEu",
         # "chii_sec_id":"U1HHXb8%2FzmOGFnuN3jWQUxCIOEs8LWYAeMv3DeU",
         # "__utma":"1.1005452815.1616837804.1616837804.1616843638.2",
         # "__utmz":"1.1616837804.1.1.utmcsr=(direct)|utmccn=(direct)|utmcmd=(none)",
@@ -96,6 +97,7 @@ class BgmCrawler:
         result["subject_id"] = target_url.split("/")[-1]
         # 判断是否需要登录抓取
         if not need_cookie and len(html.find("h1.nameSingle>a")) == 0 and len(html.find("#colunmNotice")) > 0:
+            print("{} 重新尝试登录抓取!".format(target_url))
             return self.get_detail(target_url, True)
         title = html.find("h1.nameSingle>a")
         if title is None or len(title) == 0:
@@ -156,5 +158,5 @@ def crawler_one_page(url):
 
 
 if __name__ == '__main__':
-    # crawler_tag_list("https://bgm.tv/anime/tag/2021%E5%B9%B44%E6%9C%88")
-    crawler_one_page("https://bgm.tv/subject/327986")
+    # crawler_tag_list("https://bgm.tv/anime/tag/2020%E5%B9%B47%E6%9C%88")
+    crawler_one_page("https://bgm.tv/subject/306993")
