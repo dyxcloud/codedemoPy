@@ -13,8 +13,8 @@ def get_size(imgpath):
 
 
 command = "C:\Programs\waifu2x-caffe\waifu2x-caffe-cui.exe \
--e jpg -q 100 -m auto_scale -n 1 -s {scale} -b 18 -c 64 -p cudnn -t 0 \
--i {img_path}"
+-e jpg -q 100 -m auto_scale -n 1 -s {scale} -b 1 -c 64 -p cudnn -t 0 \
+-i \"{img_path}\""
 
 
 def _waifu2x(path, scale):
