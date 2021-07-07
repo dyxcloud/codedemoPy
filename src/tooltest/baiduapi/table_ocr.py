@@ -10,8 +10,8 @@ import base64
 
 def get_token():
     # client_id 为官网获取的AK， client_secret 为官网获取的SK
-    client_id = 'M8zDrA8A6kKcYpviaysFgG08'
-    client_secret = '9r9mndXHdLBZGOryqBSjNTYHgehHIab4'
+    client_id = 'ak'
+    client_secret = 'sk'
     host = 'https://aip.baidubce.com/oauth/2.0/token?grant_type=client_credentials&client_id=' + client_id + '&client_secret=' + client_secret
     response = requests.get(host)
     if response:
@@ -40,6 +40,7 @@ def send_file(file_path):
 
 '''
 {'result': [{'request_id': '24508805_2755772'}], 'log_id': 1625641864121170}
+{'result': [{'request_id': '24508805_2755927'}], 'log_id': 1625643277344275}
 '''
 
 
@@ -59,6 +60,6 @@ def get_result(result_id):
 
 if __name__ == '__main__':
     # get_token()
-    # my_file = r'D:\Download\201530047535X-000001.png'
+    my_file = r'D:\Download\2018304051444_130101.png'
     # send_file(my_file)
-    get_result('24508805_2755772')
+    get_result('24508805_2755927')
